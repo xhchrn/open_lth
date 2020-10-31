@@ -55,7 +55,7 @@ if __name__ == "__main__":
             train_loss = 0.0
             for batch_idx, (inputs, targets) in enumerate(t):
                 inputs = inputs.cuda()
-                targets = targets.cuda()
+                targets = targets.cuda().float()
 
                 outputs = meta(inputs)
                 loss = F.mse_loss(outputs, target=targets)
@@ -71,7 +71,7 @@ if __name__ == "__main__":
             val_loss = 0.0
             for inputs, targets in val_dataloader:
                 inputs = inputs.cuda()
-                targets = targets.cuda()
+                targets = targets.cuda().float()
 
                 outputs = meta(inputs)
                 loss = F.mse_loss(outputs, target=targets)
