@@ -48,7 +48,7 @@ if __name__ == "__main__":
     val_dataloader = DataLoader(val_dataset, batch_size=120, shuffle=True)
 
     meta = MetaMap().cuda()
-    optimizer = optim.Adam(lr=0.01)
+    optimizer = optim.Adam(meta.parameters(), lr=0.01)
 
     for epoch in range(100):
         with tqdm(train_dataloader, dynamic_ncols=True) as t:
