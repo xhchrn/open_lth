@@ -9,10 +9,17 @@ from foundations import paths
 from foundations.hparams import ModelHparams
 from foundations.step import Step
 from models import cifar_resnet, cifar_vgg, mnist_lenet, imagenet_resnet
+from models import cifar_score_resnet
 from models import bn_initializers, initializers
 from platforms.platform import get_platform
 
-registered_models = [mnist_lenet.Model, cifar_resnet.Model, cifar_vgg.Model, imagenet_resnet.Model]
+registered_models = [
+    mnist_lenet.Model,
+    cifar_resnet.Model,
+    cifar_score_resnet.Model,
+    cifar_vgg.Model,
+    imagenet_resnet.Model
+]
 
 
 def get(model_hparams: ModelHparams, outputs=None):
@@ -73,6 +80,13 @@ def get(model_hparams: ModelHparams, outputs=None):
 
 def load(save_location: str, save_step: Step, model_hparams: ModelHparams, outputs=None):
     state_dict = get_platform().load_model(paths.model(save_location, save_step))
+    model = get(model_hparams, outputs)
+    model.load_state_dict(state_dict)
+    return model
+
+
+def load_from_file(file_location: str, model_hparams: ModelHparams, outputs=None):
+    state_dict = get_platform().load_model(paths.model(file_location))
     model = get(model_hparams, outputs)
     model.load_state_dict(state_dict)
     return model

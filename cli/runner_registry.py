@@ -7,8 +7,14 @@ from foundations.runner import Runner
 from lottery.branch.runner import BranchRunner
 from lottery.runner import LotteryRunner
 from training.runner import TrainingRunner
+from distill.runner import DistillRunner
 
-registered_runners = {'train': TrainingRunner, 'lottery': LotteryRunner, 'lottery_branch': BranchRunner}
+registered_runners = {
+    'train': TrainingRunner,
+    'lottery': LotteryRunner,
+    'lottery_branch': BranchRunner,
+    'distill': DistillRunner,
+}
 
 
 def get(runner_name: str) -> Runner:

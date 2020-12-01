@@ -185,3 +185,26 @@ class PruningHparams(Hparams):
     _description: str = 'Hyperparameters that determine how the model is pruned. ' \
                         'More hyperparameters will appear once the pruning strategy is selected.'
     _pruning_strategy: str = 'The pruning strategy to use.'
+
+
+@dataclass
+class DistillHparams(Hparams):
+    teacher_model_name: str
+    teacher_ckpt: str
+    teacher_mask: str = None
+    alpha_ce : float = 1.0
+    alpha_mse: float = 1.0
+    alpha_cls: float = 1.0
+    alpha_cos: float = 1.0
+    temperature: float = 1.0
+
+    _name: str = 'Distillation Hyperparameters'
+    _description: str = 'Hyperparameters for the distillation experiments.'
+    _teacher_model_name: str = 'The name of the teacher model. Examples: mnist_lenet, cifar_resnet_20, cifar_vgg_16'
+    _teacher_ckpt: str = 'Path to the chechpoint for the teacher model.'
+    _teacher_mask: str = 'Path to the mask for the teacher model.'
+    _alpha_ce : str = 'Coefficient of the CrossEntropy loss term.'
+    _alpha_mse: str = 'Coefficient of the MSE loss term.'
+    _alpha_cls: str = 'Coefficient of the Classification loss term.'
+    _alpha_cos: str = 'Coefficient of the cosine loss term.'
+    _temperature: str = 'Temperature in the CrossEntropy loss term.'
