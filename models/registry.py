@@ -86,7 +86,7 @@ def load(save_location: str, save_step: Step, model_hparams: ModelHparams, outpu
 
 
 def load_from_file(file_location: str, model_hparams: ModelHparams, outputs=None):
-    state_dict = get_platform().load_model(paths.model(file_location))
+    state_dict = get_platform().load_model(file_location)
     model = get(model_hparams, outputs)
     model.load_state_dict(state_dict)
     return model
