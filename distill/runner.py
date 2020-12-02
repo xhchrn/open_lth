@@ -4,6 +4,7 @@
 # LICENSE file in the root directory of this source tree.
 
 import argparse
+from copy import deepcopy
 from dataclasses import dataclass
 
 from cli import shared_args
@@ -55,10 +56,11 @@ class DistillRunner(Runner):
         # Get the student model
         student = models.registry.get(self.desc.model_hparams, outputs=self.desc.train_outputs)
         # Get the teacher model
+        teacher_model_hparams = deepcopy(self.desc.model_hparams)
+        teacher_model_hparams.model_name = self.desc.distill_hparams.teacher_model_name
         teacher = models.registry.load_from_file(
-            self.desc.distill_hparams.teacher_ckpt,
-            self.desc.distill_hparams.model_hparams,
-            self.desc.train_outputs
+            self.desc.teacher_hparams.teacher_ckpt,
+            teacher_model_hparams, self.desc.train_outputs
         )
         teacher_mask = Mask.load(self.desc.distill_hparams.teacher_mask)
         teacher = PrunedModel(teacher, teacher_mask)
