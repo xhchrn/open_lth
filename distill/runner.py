@@ -66,7 +66,9 @@ class DistillRunner(Runner):
         teacher = PrunedModel(teacher, teacher_mask)
         # Run training with knowledge distillation
         train.distill_train(student, teacher, location,
-                            self.desc.dataset_hparams, self.desc.training_hparams,
+                            self.desc.dataset_hparams,
+                            self.desc.training_hparams,
+                            self.desc.distill_hparams,
                             evaluate_every_epoch=self.evaluate_every_epoch)
 
     # def _establish_initial_weights(self):
