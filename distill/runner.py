@@ -56,8 +56,11 @@ class DistillRunner(Runner):
         student = models.registry.get(self.desc.model_hparams, outputs=self.desc.train_outputs)
         # Get the teacher model
         teacher = models.registry.load_from_file(
-            self.desc.teacher_ckpt, self.desc.model_hparams, self.desc.train_outputs)
-        teacher_mask = Mask.load(self.desc.teacher_mask)
+            self.desc.distill_hparams.teacher_ckpt,
+            self.desc.distill_hparams.model_hparams,
+            self.desc.train_outputs
+        )
+        teacher_mask = Mask.load(self.desc.distill_hparams.teacher_mask)
         teacher = PrunedModel(teacher, teacher_mask)
         # Run training with knowledge distillation
         train.distill_train(student, teacher, location,
