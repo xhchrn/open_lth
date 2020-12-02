@@ -191,9 +191,9 @@ class Model(base.Model):
             teacher_mask=None,
             alpha_ce=1.0,
             alpha_mse=1.0,
-            alpha_cls=1.0,
-            alpha_cos=1.0,
-            temperature=1.0
+            alpha_cls=0.0,
+            alpha_cos=0.0,
+            temperature=2.0
         )
 
         return DistillDesc(model_hparams, dataset_hparams, training_hparams,
