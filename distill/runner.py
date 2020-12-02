@@ -11,7 +11,7 @@ from foundations.runner import Runner
 import models.registry
 from platforms.platform import get_platform
 from training import train
-from training.desc import DistillDesc
+from distill.desc import DistillDesc
 import pruning.registry
 from pruning.mask import Mask
 from pruning.pruned_model import PrunedModel
