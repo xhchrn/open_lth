@@ -165,6 +165,8 @@ def distill(
     """
 
     import torch
+    import torch.nn as nn
+    import torch.nn.functional as F
 
     # Create the output location if it doesn't already exist.
     if not get_platform().exists(output_location) and get_platform().is_primary_process:
@@ -176,6 +178,12 @@ def distill(
     optimizer = optimizers.get_optimizer(training_hparams, student)
     step_optimizer = optimizer
     lr_schedule = optimizers.get_lr_schedule(training_hparams, optimizer, train_loader.iterations_per_epoch)
+
+    ce_loss_fct = nn.KLDivLoss(reduction="batchmean")
+    if distill_hparams.alpha_mse > 0.0:
+        mse_loss_fct = nn.MSELoss(reduction='sum')
+    if distill_hparams.alpha_cos > 0.0:
+        cos_loss_fct = nn.CosineEmbeddingLoss(reduction='mean')
 
     # Adapt for FP16.
     if training_hparams.apex_fp16:
@@ -229,13 +237,33 @@ def distill(
             examples = examples.to(device=get_platform().torch_device)
             labels = labels.to(device=get_platform().torch_device)
 
+            loss = 0.0
             step_optimizer.zero_grad()
             student.train()
             teacher.eval()
+
             student_outputs = student(examples)
             with torch.no_grad():
                 teacher_outputs = teacher(examples)
-            loss = student.loss_criterion(student(examples), labels)
+
+            s_logits = student_outputs
+            t_logits = teacher_outputs
+
+            # KL Divergence loss for the knowledge distillation
+            loss_ce = ce_loss_fct(
+                F.log_softmax(s_logits / distill_hparams.temperature, dim=-1),
+                F.softmax(t_logits / distill_hparams.temperature, dim=-1),
+            ) * distill_hparams.temperature**2
+            loss += distill_hparams.alpha_ce * loss_ce
+
+            if distill_hparams.alpha_cls > 0.0:
+                loss_cls = student.loss_criterion(student_outputs, labels)
+                loss += distill_hparams.alpha_cls * loss_cls
+
+            if distill_hparams.alpha_mse > 0.0:
+                loss_mse = mse_loss_fct(s_logits, t_logits) / s_logits.size(0)
+                loss += distill_hparams.alpha_mse * loss_mse
+
             if training_hparams.apex_fp16:
                 with apex.amp.scale_loss(loss, optimizer) as scaled_loss:
                     scaled_loss.backward()
