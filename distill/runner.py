@@ -59,7 +59,7 @@ class DistillRunner(Runner):
         teacher_model_hparams = deepcopy(self.desc.model_hparams)
         teacher_model_hparams.model_name = self.desc.distill_hparams.teacher_model_name
         teacher = models.registry.load_from_file(
-            self.desc.teacher_hparams.teacher_ckpt,
+            self.desc.distill_hparams.teacher_ckpt,
             teacher_model_hparams, self.desc.train_outputs
         )
         teacher_mask = Mask.load(self.desc.distill_hparams.teacher_mask)
