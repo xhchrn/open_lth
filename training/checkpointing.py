@@ -23,8 +23,8 @@ def save_checkpoint_callback(output_location, step, model, optimizer, logger):
     get_platform().barrier()
 
 
-def restore_checkpoint(output_location, model, optimizer, iterations_per_epoch):
-    checkpoint_location = paths.checkpoint(output_location)
+def restore_checkpoint(output_location, model, optimizer, iterations_per_epoch, suffix=''):
+    checkpoint_location = paths.checkpoint(output_location, suffix)
     if not get_platform().exists(checkpoint_location):
         return None, None
     checkpoint = get_platform().load_model(checkpoint_location, map_location=torch.device('cpu'))

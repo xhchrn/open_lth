@@ -33,7 +33,8 @@ def train(
     output_location: str,
     callbacks: typing.List[typing.Callable] = [],
     start_step: Step = None,
-    end_step: Step = None
+    end_step: Step = None,
+    suffix: str = ''
 ):
 
     """The main training loop for this framework.
@@ -80,7 +81,7 @@ def train(
     data_order_seed = training_hparams.data_order_seed
 
     # Restore the model from a saved checkpoint if the checkpoint exists.
-    cp_step, cp_logger = restore_checkpoint(output_location, model, optimizer, train_loader.iterations_per_epoch)
+    cp_step, cp_logger = restore_checkpoint(output_location, model, optimizer, train_loader.iterations_per_epoch, suffix)
     start_step = cp_step or start_step or Step.zero(train_loader.iterations_per_epoch)
     logger = cp_logger or MetricLogger()
     with warnings.catch_warnings():  # Filter unnecessary warning.
