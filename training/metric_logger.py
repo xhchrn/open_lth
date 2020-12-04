@@ -34,11 +34,11 @@ class MetricLogger:
             as_str = fp.read()
         return MetricLogger.create_from_string(as_str)
 
-    def save(self, location):
+    def save(self, location, suffix=''):
         if not get_platform().is_primary_process: return
         if not get_platform().exists(location):
             get_platform().makedirs(location)
-        with get_platform().open(paths.logger(location), 'w') as fp:
+        with get_platform().open(paths.logger(location, suffix), 'w') as fp:
             fp.write(str(self))
 
     def get_data(self, desired_name):
