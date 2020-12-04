@@ -151,6 +151,12 @@ class Model(base.Model):
                 with torch.no_grad():
                     m.weight.data = m.score.data.detach()
 
+    def apply_score_to_weight(self):
+        for m in self.modules():
+            if isinstance(m, (ScoreConv2d, ScoreLinear)):
+                with torch.no_grad():
+                    m.weight.data *= m.score.data.detach()
+
     @property
     def output_layer_names(self):
         return ['fc.weight', 'fc.bias']

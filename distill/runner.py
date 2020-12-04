@@ -70,15 +70,22 @@ class DistillRunner(Runner):
         teacher = PrunedModel(teacher, teacher_mask)
 
         # Run training with knowledge distillation
-        train.distill_train(student, teacher, location,
-                            self.desc.dataset_hparams,
-                            self.desc.training_hparams,
-                            self.desc.distill_hparams,
-                            evaluate_every_epoch=self.evaluate_every_epoch,
-                            suffix='_distill')
+        if models.registry.exists(location, self.desc.training_end_step, suffix='_distill'):
+            student = models.registry.load(location,
+                                           self.desc.train_end_step,
+                                           self.desc.model_hparams,
+                                           self.desc.train_outputs,
+                                           suffix='_distill')
+        else:
+            train.distill_train(student, teacher, location,
+                                self.desc.dataset_hparams,
+                                self.desc.training_hparams,
+                                self.desc.distill_hparams,
+                                evaluate_every_epoch=self.evaluate_every_epoch,
+                                suffix='_distill')
 
         # Use the distilled student model to do the pruning
-        student.copy_score_to_weight()
+        student.apply_score_to_weight()
         # TODO: tweak pruning hparams to match teacher's sparsity level
         pruning.registry.get(self.desc.pruning_hparams)(student).save(location, suffix='_distill')
 
