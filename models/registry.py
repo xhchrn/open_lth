@@ -78,10 +78,10 @@ def get(model_hparams: ModelHparams, outputs=None):
     return model
 
 
-def load(save_location: str, save_step: Step, model_hparams: ModelHparams, outputs=None):
-    state_dict = get_platform().load_model(paths.model(save_location, save_step))
+def load(save_location: str, save_step: Step, model_hparams: ModelHparams, outputs=None, strict=False, suffix=""):
+    state_dict = get_platform().load_model(paths.model(save_location, save_step, suffix))
     model = get(model_hparams, outputs)
-    model.load_state_dict(state_dict)
+    model.load_state_dict(state_dict, strict=strict)
     return model
 
 
@@ -92,8 +92,8 @@ def load_from_file(file_location: str, model_hparams: ModelHparams, outputs=None
     return model
 
 
-def exists(save_location, save_step):
-    return get_platform().exists(paths.model(save_location, save_step))
+def exists(save_location, save_step, suffix=""):
+    return get_platform().exists(paths.model(save_location, save_step, suffix))
 
 
 def get_default_hparams(model_name):

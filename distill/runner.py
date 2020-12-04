@@ -48,13 +48,17 @@ class DistillRunner(Runner):
             print('='*82 + f'\nTraining a Model with Knowledge Distillation (Replicate {self.replicate})\n' + '-'*82)
             print(self.desc.display)
             print(f'Output Location: {self.desc.run_path(self.replicate)}' + '\n' + '='*82 + '\n')
+
         if get_platform().is_primary_process: self.desc.save(location)
 
         # if get_platform().is_primary_process: self._establish_initial_weights()
         # get_platform().barrier()
 
         # Get the student model
-        student = models.registry.get(self.desc.model_hparams, outputs=self.desc.train_outputs)
+        # student = models.registry.get(self.desc.model_hparams, outputs=self.desc.train_outputs)
+        assert 'score-' in self.desc.model_hparams.model_name
+        student = self._establish_initial_weights()
+
         # Get the teacher model
         teacher_model_hparams = deepcopy(self.desc.model_hparams)
         teacher_model_hparams.model_name = self.desc.distill_hparams.teacher_model_name
@@ -64,17 +68,55 @@ class DistillRunner(Runner):
         )
         teacher_mask = Mask.load(self.desc.distill_hparams.teacher_mask)
         teacher = PrunedModel(teacher, teacher_mask)
+
         # Run training with knowledge distillation
         train.distill_train(student, teacher, location,
                             self.desc.dataset_hparams,
                             self.desc.training_hparams,
                             self.desc.distill_hparams,
-                            evaluate_every_epoch=self.evaluate_every_epoch)
+                            evaluate_every_epoch=self.evaluate_every_epoch,
+                            suffix='_distill')
 
-    # def _establish_initial_weights(self):
-    #     location = self.desc.run_path(self.replicate)
-    #     if models.registry.exists(location, self.desc.start_step): return
+        # Use the distilled student model to do the pruning
+        student.copy_score_to_weight()
+        # TODO: tweak pruning hparams to match teacher's sparsity level
+        pruning.registry.get(self.desc.pruning_hparams)(student).save(location, suffix='_distill')
 
-    #     new_model = models.registry.get(self.desc.model_hparams, outputs=self.desc.train_outputs)
+        # Train a new student model in the standard manner with the above mask
+        new_student_model_hparams = deepcopy(self.desc.model_hparams)
+        new_student_model_hparams.model_name = new_student_model_hparams.model_name.replace('score-', '')
+        new_student = models.registry.load(location,
+                                           self.desc.train_start_step,
+                                           new_student_model_hparams,
+                                           self.desc.train_outputs,
+                                           strict=False,
+                                           suffix='_score')
+        new_student_mask = Mask.load(location, suffix='_distill')
+        new_student = PrunedModel(new_student, new_student_mask)
 
-    #     new_model.save(location, self.desc.train_start_step)
+        # Run standard training for the new student
+        train.standard_train(new_student, location,
+                             self.desc.dataset_hparams,
+                             self.desc.training_hparams,
+                             start_step=self.desc.train_start_step,
+                             verbose=self.verbose,
+                             evaluate_every_epoch=self.evaluate_every_epoch,
+                             suffix='_post_distill')
+
+    def _establish_initial_weights(self):
+        location = self.desc.run_path(self.replicate)
+
+        if models.registry.exists(location, self.desc.start_step, suffix='_score'):
+            new_model = models.registry.load(location,
+                                             self.desc.train_start_step,
+                                             self.desc.model_hparams,
+                                             self.desc.train_outputs,
+                                             suffix='_score')
+        else:
+            new_model = models.registry.get(self.desc.model_hparams,
+                                            outputs=self.desc.train_outputs)
+
+        if get_platform().is_primary_process:
+            new_model.save(location, self.desc.train_start_step, suffix='_score')
+
+        return new_model

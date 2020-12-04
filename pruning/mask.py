@@ -48,14 +48,15 @@ class Mask(dict):
             fp.write(json.dumps({'total': float(total_weights), 'unpruned': float(total_unpruned)}, indent=4))
 
     @staticmethod
-    def load(output_location):
-        if not Mask.exists(output_location):
-            raise ValueError('Mask not found at {}'.format(output_location))
-        return Mask(get_platform().load_model(paths.mask(output_location)))
+    def load(output_location, suffix=''):
+        if not Mask.exists(output_location, suffix):
+            error_output_suffix = ' with suffix {}'.format(suffix) if suffix != '' else ''
+            raise ValueError('Mask not found at {}{}'.format(output_location, error_output_suffix))
+        return Mask(get_platform().load_model(paths.mask(output_location, suffix)))
 
     @staticmethod
-    def exists(output_location):
-        return get_platform().exists(paths.mask(output_location))
+    def exists(output_location, suffix=''):
+        return get_platform().exists(paths.mask(output_location, suffix))
 
     def numpy(self):
         return {k: v.cpu().numpy() for k, v in self.items()}

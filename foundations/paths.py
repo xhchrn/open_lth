@@ -6,19 +6,25 @@
 import os
 
 
-def checkpoint(root): return os.path.join(root, 'checkpoint.pth')
+def checkpoint(root, suffix=""):
+    return os.path.join(root, 'checkpoint{}.pth'.format(suffix))
 
 
-def logger(root): return os.path.join(root, 'logger')
+def logger(root, suffix=""):
+    return os.path.join(root, 'logger' + suffix)
 
 
-def mask(root): return os.path.join(root, 'mask.pth')
+def mask(root, suffix=""):
+    return os.path.join(root, 'mask{}.pth'.format(suffix))
 
 
-def sparsity_report(root): return os.path.join(root, 'sparsity_report.json')
+def sparsity_report(root, suffix=""):
+    return os.path.join(root, 'sparsity_report{}.json'.format(suffix))
 
 
-def model(root, step): return os.path.join(root, 'model_ep{}_it{}.pth'.format(step.ep, step.it))
+def model(root, step, suffix=""):
+    return os.path.join(root, 'model_ep{}_it{}{}.pth'.format(step.ep, step.it, suffix))
 
 
-def hparams(root): return os.path.join(root, 'hparams.log')
+def hparams(root, suffix=""):
+    return os.path.join(root, 'hparams{}.log'.format(suffix))

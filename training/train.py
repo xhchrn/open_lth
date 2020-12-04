@@ -286,7 +286,8 @@ def standard_train(
   training_hparams: hparams.TrainingHparams,
   start_step: Step = None,
   verbose: bool = True,
-  evaluate_every_epoch: bool = True
+  evaluate_every_epoch: bool = True,
+  suffix: str = ''
 ):
     """Train using the standard callbacks according to the provided hparams."""
 
@@ -300,7 +301,7 @@ def standard_train(
     test_loader = datasets.registry.get(dataset_hparams, train=False)
     callbacks = standard_callbacks.standard_callbacks(
         training_hparams, train_loader, test_loader, start_step=start_step,
-        verbose=verbose, evaluate_every_epoch=evaluate_every_epoch)
+        verbose=verbose, evaluate_every_epoch=evaluate_every_epoch, suffix=suffix)
     train(training_hparams, model, train_loader, output_location, callbacks, start_step=start_step)
 
 
@@ -313,7 +314,8 @@ def distill_train(
   distill_hparams: hparams.DistillHparams,
   start_step: Step = None,
   verbose: bool = True,
-  evaluate_every_epoch: bool = True
+  evaluate_every_epoch: bool = True,
+  suffix: str = ""
 ):
     """Train using the standard callbacks according to the provided hparams."""
 
@@ -327,6 +329,6 @@ def distill_train(
     test_loader = datasets.registry.get(dataset_hparams, train=False)
     callbacks = standard_callbacks.standard_callbacks(
         training_hparams, train_loader, test_loader, start_step=start_step,
-        verbose=verbose, evaluate_every_epoch=evaluate_every_epoch)
+        verbose=verbose, evaluate_every_epoch=evaluate_every_epoch, suffix=suffix)
     distill(training_hparams, distill_hparams, student, teacher,
             train_loader, output_location, callbacks, start_step=start_step)
