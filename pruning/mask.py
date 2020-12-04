@@ -36,15 +36,15 @@ class Mask(dict):
             mask[name] = torch.ones(list(model.state_dict()[name].shape))
         return mask
 
-    def save(self, output_location):
+    def save(self, output_location, suffix=''):
         if not get_platform().is_primary_process: return
         if not get_platform().exists(output_location): get_platform().makedirs(output_location)
-        get_platform().save_model({k: v.cpu().int() for k, v in self.items()}, paths.mask(output_location))
+        get_platform().save_model({k: v.cpu().int() for k, v in self.items()}, paths.mask(output_location, suffix))
 
         # Create a sparsity report.
         total_weights = np.sum([v.size for v in self.numpy().values()]).item()
         total_unpruned = np.sum([np.sum(v) for v in self.numpy().values()]).item()
-        with get_platform().open(paths.sparsity_report(output_location), 'w') as fp:
+        with get_platform().open(paths.sparsity_report(output_location, suffix), 'w') as fp:
             fp.write(json.dumps({'total': float(total_weights), 'unpruned': float(total_unpruned)}, indent=4))
 
     @staticmethod
