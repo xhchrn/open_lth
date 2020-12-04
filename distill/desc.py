@@ -82,19 +82,18 @@ class DistillDesc(desc.Desc):
         iterations_per_epoch = datasets_registry.iterations_per_epoch(dataset_hparams)
         return Step.from_str(s, iterations_per_epoch)
 
-    # @property
-    # def start_step(self):
-    #     return self.str_to_step('0it')
+    @property
+    def start_step(self):
+        return self.str_to_step('0it')
 
-    # @property
-    # def end_step(self):
-    #     iterations_per_epoch = datasets_registry.iterations_per_epoch(self.dataset_hparams)
-    #     return Step.from_str(self.training_hparams.training_steps, iterations_per_epoch)
+    @property
+    def end_step(self):
+        iterations_per_epoch = datasets_registry.iterations_per_epoch(self.dataset_hparams)
+        return Step.from_str(self.training_hparams.training_steps, iterations_per_epoch)
 
     @property
     def train_start_step(self):
-        if self.pretrain_training_hparams: return self.str_to_step(self.pretrain_training_hparams.training_steps)
-        else: return self.str_to_step('0it')
+        return self.str_to_step('0it')
 
     @property
     def train_end_step(self):
