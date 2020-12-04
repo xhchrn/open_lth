@@ -57,7 +57,7 @@ class ScoreLinear(nn.Linear):
         [type]: [description]
     """
 
-    def __init__(self, in_features: int, out_features: int, bias: bool) -> None:
+    def __init__(self, in_features: int, out_features: int, bias: bool = None) -> None:
         super().__init__(in_features, out_features, bias=bias)
 
         self.score = nn.Parameter(torch.ones_like(self.weight))
