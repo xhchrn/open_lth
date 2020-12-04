@@ -70,7 +70,7 @@ class DistillRunner(Runner):
         teacher = PrunedModel(teacher, teacher_mask)
 
         # Run training with knowledge distillation
-        if models.registry.exists(location, self.desc.training_end_step, suffix='_distill'):
+        if models.registry.exists(location, self.desc.train_end_step, suffix='_distill'):
             student = models.registry.load(location,
                                            self.desc.train_end_step,
                                            self.desc.model_hparams,
