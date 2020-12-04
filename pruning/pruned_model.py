@@ -52,8 +52,8 @@ class PrunedModel(Model):
     def loss_criterion(self):
         return self.model.loss_criterion
 
-    def save(self, save_location, save_step):
-        self.model.save(save_location, save_step)
+    def save(self, save_location, save_step, suffix=''):
+        self.model.save(save_location, save_step, suffix)
 
     @staticmethod
     def default_hparams(): raise NotImplementedError()
