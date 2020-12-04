@@ -303,7 +303,7 @@ def standard_train(
     callbacks = standard_callbacks.standard_callbacks(
         training_hparams, train_loader, test_loader, start_step=start_step,
         verbose=verbose, evaluate_every_epoch=evaluate_every_epoch, suffix=suffix)
-    train(training_hparams, model, train_loader, output_location, callbacks, start_step=start_step)
+    train(training_hparams, model, train_loader, output_location, callbacks, start_step=start_step, suffix=suffix)
 
 
 def distill_train(
