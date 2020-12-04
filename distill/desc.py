@@ -53,6 +53,10 @@ class DistillDesc(desc.Desc):
             pruning_hparams = pruning.registry.get_pruning_hparams(pruning_strategy)
             if defaults and defaults.pruning_hparams.pruning_strategy == pruning_strategy:
                 def_ph = defaults.pruning_hparams
+            else:
+                def_ph = defaults.pruning_hparams
+                def_ph.pruning_strategy = pruning_strategy
+                print(def_ph.pruning_strategy)
         else:
             pruning_hparams = hparams.PruningHparams
             def_ph = None
