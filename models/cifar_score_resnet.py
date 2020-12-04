@@ -43,6 +43,43 @@ class ScoreConv2d(nn.Conv2d):
                           self.padding, self.dilation, self.groups)
         return output
 
+class ScoreLinear(nn.Linear):
+    """[summary]
+
+    Args:
+        nn ([type]): [description]
+
+    Raises:
+        ValueError: [description]
+        ValueError: [description]
+
+    Returns:
+        [type]: [description]
+    """
+
+    def __init__(self, in_features: int, out_features: int, bias: bool) -> None:
+        super().__init__(in_features, out_features, bias=bias)
+
+        self.score = nn.Parameter(torch.ones_like(self.weight))
+
+        # Disable the learning of the weight and bias
+        self.disable_weight_training()
+
+    def disable_weight_training(self):
+        self.weight.requires_grad_(False)
+        if self.bias is not None:
+            self.bias.requires_grad_(False)
+
+    def enable_weight_training(self):
+        self.weight.requires_grad_(True)
+        if self.bias is not None:
+            self.bias.requires_grad_(True)
+
+    def forward(self, input):
+        weight = self.weight * self.score
+        output = F.linear(input, weight, self.bias)
+        return output
+
 
 class Model(base.Model):
     """A residual neural network as originally designed for CIFAR-10."""
@@ -94,7 +131,7 @@ class Model(base.Model):
         self.blocks = nn.Sequential(*blocks)
 
         # Final fc layer. Size = number of filters in last segment.
-        self.fc = nn.Linear(plan[-1][0], outputs)
+        self.fc = ScoreLinear(plan[-1][0], outputs)
         self.criterion = nn.CrossEntropyLoss()
 
         # Initialize.
@@ -110,7 +147,7 @@ class Model(base.Model):
 
     def copy_score_to_weight(self):
         for m in self.modules():
-            if isinstance(m, ScoreConv2d):
+            if isinstance(m, (ScoreConv2d, ScoreLinear)):
                 with torch.no_grad():
                     m.weight.data = m.score.data.detach()
 
