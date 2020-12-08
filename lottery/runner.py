@@ -5,6 +5,7 @@
 
 import argparse
 
+from foundations import paths
 from cli import shared_args
 from dataclasses import dataclass
 from foundations.runner import Runner
@@ -86,7 +87,10 @@ class LotteryRunner(Runner):
 
     def _establish_initial_weights(self):
         location = self.desc.run_path(self.replicate, 0)
-        if models.registry.exists(location, self.desc.train_start_step): return
+        if models.registry.exists(location, self.desc.train_start_step):
+            if get_platform().is_primary_process:
+                print('Initial weights loaded from {}'.format(paths.model(location, 0)))
+            return
 
         new_model = models.registry.get(self.desc.model_hparams, outputs=self.desc.train_outputs)
 
