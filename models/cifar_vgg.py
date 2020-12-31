@@ -40,7 +40,8 @@ class Model(base.Model):
                 filters = spec
 
         self.layers = nn.Sequential(*layers)
-        self.fc = nn.Linear(512, outputs)
+        # self.fc = nn.Linear(512, outputs)
+        self.fc = nn.Linear(plan[-1], outputs)
         self.criterion = nn.CrossEntropyLoss()
 
         self.apply(initializer)
