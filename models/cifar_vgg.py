@@ -59,8 +59,9 @@ class Model(base.Model):
     @staticmethod
     def is_valid_model_name(model_name):
         return (model_name.startswith('cifar_vgg_') and
-                len(model_name.split('_')) == 3 and
+                (len(model_name.split('_')) == 3 or len(model_name.split('_')) == 4) and
                 model_name.split('_')[2].isdigit() and
+                (len(model_name.split('_')) == 3 or model_name.split('_')[3].isdigit()) and
                 int(model_name.split('_')[2]) in [11, 13, 16, 19])
 
     @staticmethod
@@ -71,14 +72,19 @@ class Model(base.Model):
         outputs = outputs or 10
 
         num = int(model_name.split('_')[2])
+        width = int(model_name.split('_')[3]) if len(model_name.split('_')) == 4 else 64
         if num == 11:
-            plan = [64, 'M', 128, 'M', 256, 256, 'M', 512, 512, 'M', 512, 512]
+            # plan = [64, 'M', 128, 'M', 256, 256, 'M', 512, 512, 'M', 512, 512]
+            plan = [width, 'M', width*2, 'M', width*4, width*4, 'M', width*8, width*8, 'M', width*8, width*8]
         elif num == 13:
-            plan = [64, 64, 'M', 128, 128, 'M', 256, 256, 'M', 512, 512, 'M', 512, 512]
+            # plan = [64, 64, 'M', 128, 128, 'M', 256, 256, 'M', 512, 512, 'M', 512, 512]
+            plan = [width, width, 'M', width*2, width*2, 'M', width*4, width*4, 'M', width*8, width*8, 'M', width*8, width*8]
         elif num == 16:
-            plan = [64, 64, 'M', 128, 128, 'M', 256, 256, 256, 'M', 512, 512, 512, 'M', 512, 512, 512]
+            # plan = [64, 64, 'M', 128, 128, 'M', 256, 256, 256, 'M', 512, 512, 512, 'M', 512, 512, 512]
+            plan = [width, width, 'M', width*2, width*2, 'M', width*4, width*4, width*4, 'M', width*8, width*8, width*8, 'M', width*8, width*8, width*8]
         elif num == 19:
-            plan = [64, 64, 'M', 128, 128, 'M', 256, 256, 256, 256, 'M', 512, 512, 512, 512, 'M', 512, 512, 512, 512]
+            # plan = [64, 64, 'M', 128, 128, 'M', 256, 256, 256, 256, 'M', 512, 512, 512, 512, 'M', 512, 512, 512, 512]
+            plan = [width, width, 'M', width*2, width*2, 'M', width*4, width*4, width*4, width*4, 'M', width*8, width*8, width*8, width*8, 'M', width*8, width*8, width*8, width*8]
         else:
             raise ValueError('Unknown VGG model: {}'.format(model_name))
 
