@@ -97,6 +97,8 @@ class LotteryRunner(Runner):
         # If there was a pretrained model, retrieve its final weights and adapt them for training.
         if self.desc.pretrain_training_hparams is not None:
             pretrain_loc = self.desc.run_path(self.replicate, 'pretrain')
+            if get_platform().is_primary_process:
+                print('Initial weights loaded from pretrained checkpoint {}'.format(paths.model(pretrain_loc, self.desc.pretrain_end_step)))
             old = models.registry.load(pretrain_loc, self.desc.pretrain_end_step,
                                        self.desc.model_hparams, self.desc.pretrain_outputs)
             state_dict = {k: v for k, v in old.state_dict().items()}
