@@ -18,7 +18,7 @@ class Model(base.Model):
     def __init__(self, initializer, outputs=10):
         super(Model, self).__init__()
 
-        self.conv1 = nn.Conv2d(3,6,kernel_size=5, bias=False)
+        self.conv1 = nn.Conv2d(1,6,kernel_size=5, bias=False)
         self.conv2 = nn.Conv2d(6,16,kernel_size=5, bias=False)
         self.conv3 = nn.Conv2d(16,120,kernel_size=5, bias=False)
         self.fc1 = nn.Conv2d(120,84,kernel_size=1, bias=False)
