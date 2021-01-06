@@ -42,13 +42,13 @@ class Dataset(base.ImageDataset):
     def num_classes(): return 10
 
     @staticmethod
-    def get_train_set(use_augmentation):
+    def get_train_set(use_augmentation, resize):
         augment = [torchvision.transforms.RandomHorizontalFlip(), torchvision.transforms.RandomCrop(32, 4)]
         train_set = CIFAR10(train=True, root=os.path.join(get_platform().dataset_root, 'cifar10'), download=True)
         return Dataset(train_set.data, np.array(train_set.targets), augment if use_augmentation else [])
 
     @staticmethod
-    def get_test_set():
+    def get_test_set(resize):
         test_set = CIFAR10(train=False, root=os.path.join(get_platform().dataset_root, 'cifar10'), download=True)
         return Dataset(test_set.data, np.array(test_set.targets))
 

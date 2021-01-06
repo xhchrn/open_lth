@@ -112,6 +112,7 @@ class DatasetHparams(Hparams):
     random_labels_fraction: float = None
     unsupervised_labels: str = None
     blur_factor: int = None
+    resize_input: bool = False
 
     _name: str = 'Dataset Hyperparameters'
     _description: str = 'Hyperparameters that select the dataset, data augmentation, and other data transformations.'
@@ -124,6 +125,7 @@ class DatasetHparams(Hparams):
     _random_labels_fraction: str = 'Apply random labels to a fraction of the training set: float in (0, 1]'
     _unsupervised_labels: str = 'Replace the standard labels with alternative, unsupervised labels. Example: rotation'
     _blur_factor: str = 'Blur the training set by downsampling and then upsampling by this multiple.'
+    _resize_input: str = 'Resize the input, specifically for LeNet-5 on MNIST dataset.'
 
 
 @dataclass

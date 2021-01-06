@@ -20,10 +20,11 @@ def get(dataset_hparams: DatasetHparams, train: bool = True):
     # Get the dataset itself.
     if dataset_hparams.dataset_name in registered_datasets:
         use_augmentation = train and not dataset_hparams.do_not_augment
+        resize = dataset_hparams.resize_input
         if train:
-            dataset = registered_datasets[dataset_hparams.dataset_name].Dataset.get_train_set(use_augmentation)
+            dataset = registered_datasets[dataset_hparams.dataset_name].Dataset.get_train_set(use_augmentation, resize)
         else:
-            dataset = registered_datasets[dataset_hparams.dataset_name].Dataset.get_test_set()
+            dataset = registered_datasets[dataset_hparams.dataset_name].Dataset.get_test_set(resize)
     else:
         raise ValueError('No such dataset: {}'.format(dataset_hparams.dataset_name))
 

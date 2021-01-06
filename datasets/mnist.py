@@ -24,16 +24,37 @@ class Dataset(base.ImageDataset):
     def num_classes(): return 10
 
     @staticmethod
-    def get_train_set(use_augmentation):
+    def get_train_set(use_augmentation, resize):
+        # Resize the image for LeNet-5
+        if resize:
+            transforms = torchvision.transforms.Compose(
+                [torchvision.transforms.Resize((32, 32))]
+            )
+        else:
+            transforms = None
         # No augmentation for MNIST.
         train_set = torchvision.datasets.MNIST(
-            train=True, root=os.path.join(get_platform().dataset_root, 'mnist'), download=True)
+            train=True,
+            root=os.path.join(get_platform().dataset_root, 'mnist'),
+            download=True,
+            transform=transforms
+        )
         return Dataset(train_set.data, train_set.targets)
 
     @staticmethod
-    def get_test_set():
+    def get_test_set(resize):
+        if resize:
+            transforms = torchvision.transforms.Compose(
+                [torchvision.transforms.Resize((32, 32))]
+            )
+        else:
+            transforms = None
         test_set = torchvision.datasets.MNIST(
-            train=False, root=os.path.join(get_platform().dataset_root, 'mnist'), download=True)
+            train=False,
+            root=os.path.join(get_platform().dataset_root, 'mnist'),
+            download=True,
+            transform=transforms
+        )
         return Dataset(test_set.data, test_set.targets)
 
     def __init__(self,  examples, labels):
