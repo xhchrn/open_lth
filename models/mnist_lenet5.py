@@ -23,6 +23,7 @@ class Model(base.Model):
         self.conv3 = nn.Conv2d(16,120,kernel_size=5, bias=False)
         self.fc1 = nn.Conv2d(120,84,kernel_size=1, bias=False)
         self.fc2 = nn.Conv2d(84,outputs,kernel_size=1, bias=False)
+        self.tanh = nn.Tanh()
         self.avg1 = nn.AvgPool2d((2,2))
         self.avg2 = nn.AvgPool2d((2,2))
 
@@ -40,12 +41,20 @@ class Model(base.Model):
 
     def forward(self, x):
         out = self.conv1(x)
+        out = self.tanh(out)
         out = self.avg1(out)
+
         out = self.conv2(out)
+        out = self.tanh(out)
         out = self.avg2(out)
+
         out = self.conv3(out)
+        out = self.tanh(out)
+
         out = self.fc1(out)
+        out = self.tanh(out)
         out = self.fc2(out)
+
         return out.view(out.size(0), -1)
 
     @property
