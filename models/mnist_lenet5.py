@@ -46,7 +46,7 @@ class Model(base.Model):
         out = self.conv3(out)
         out = self.fc1(out)
         out = self.fc2(out)
-        return out
+        return out.view(out.size(0), -1)
 
     @property
     def output_layer_names(self):
