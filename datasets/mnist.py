@@ -33,33 +33,21 @@ class Dataset(base.ImageDataset):
         else:
             transforms = None
         # No augmentation for MNIST.
-        train_set = torchvision.datasets.MNIST(
-            train=True,
-            root=os.path.join(get_platform().dataset_root, 'mnist'),
-            download=True,
-            transform=transforms
-        )
-        return Dataset(train_set.data, train_set.targets)
+        train_set = torchvision.datasets.MNIST(train=True, root=os.path.join(get_platform().dataset_root, 'mnist'), download=True)
+        return Dataset(train_set.data, train_set.targets, transforms)
 
     @staticmethod
     def get_test_set(resize):
         if resize:
-            transforms = torchvision.transforms.Compose(
-                [torchvision.transforms.Resize((32, 32))]
-            )
+            transforms = torchvision.transforms.Compose([torchvision.transforms.Resize((32, 32))])
         else:
             transforms = None
-        test_set = torchvision.datasets.MNIST(
-            train=False,
-            root=os.path.join(get_platform().dataset_root, 'mnist'),
-            download=True,
-            transform=transforms
-        )
-        return Dataset(test_set.data, test_set.targets)
+        test_set = torchvision.datasets.MNIST(train=False, root=os.path.join(get_platform().dataset_root, 'mnist'), download=True)
+        return Dataset(test_set.data, test_set.targets, transforms)
 
-    def __init__(self,  examples, labels):
+    def __init__(self,  examples, labels, image_transforms=None):
         tensor_transforms = [torchvision.transforms.Normalize(mean=[0.1307], std=[0.3081])]
-        super(Dataset, self).__init__(examples, labels, [], tensor_transforms)
+        super(Dataset, self).__init__(examples, labels, image_transforms or [], tensor_transforms)
 
     def example_to_image(self, example):
         return Image.fromarray(example.numpy(), mode='L')
