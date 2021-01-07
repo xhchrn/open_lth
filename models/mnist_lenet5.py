@@ -13,7 +13,7 @@ from pruning import sparse_global
 
 
 class Model(base.Model):
-    '''A LeNet fully-connected model for CIFAR-10'''
+    '''A LeNet-5 model for MNIST-10'''
 
     def __init__(self, initializer, outputs=10):
         super(Model, self).__init__()
@@ -27,14 +27,6 @@ class Model(base.Model):
         self.avg1 = nn.AvgPool2d((2,2))
         self.avg2 = nn.AvgPool2d((2,2))
 
-        # layers = []
-        # current_size = 784  # 28 * 28 = number of pixels in MNIST image.
-        # for size in plan:
-        #     layers.append(nn.Linear(current_size, size))
-        #     current_size = size
-
-        # self.fc_layers = nn.ModuleList(layers)
-        # self.fc = nn.Linear(current_size, outputs)
         self.criterion = nn.CrossEntropyLoss()
 
         self.apply(initializer)
