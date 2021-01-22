@@ -37,7 +37,7 @@ class Branch(base.Branch):
         src_mask = Mask.load(self.level_root)
         start_step = self.lottery_desc.str_to_step('0it') if start_at_step_zero else self.lottery_desc.train_start_step
         # model = PrunedModel(models.registry.get(self.lottery_desc.model_hparams), src_mask)
-        model = PrunedModel(models.registry.load(self.level_root, start_step, self.lottery_desc.model_hparams), mask)
+        src_model = models.registry.load(self.level_root, start_step, self.lottery_desc.model_hparams)
 
         # Create target model
         target_model_hparams = copy.deepcopy(self.lottery_desc.model_hparams)
@@ -46,7 +46,7 @@ class Branch(base.Branch):
         target_ones_mask = Mask.ones_like(target_model)
         
         # Do the morphism
-        target_sd = change_depth(model.model.state_dict(), target_model.state_dict(), mapping)
+        target_sd = change_depth(src_model.state_dict(), target_model.state_dict(), mapping)
         target_model.load_state_dict(target_sd)
         target_mask = change_depth(src_mask, target_ones_mask, mapping)
         target_model = PrunedModel(target_model, target_mask)
