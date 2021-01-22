@@ -145,10 +145,13 @@ class Branch(Runner):
         fields = []
         for arg_name, parameter in list(inspect.signature(cls.branch_function).parameters.items())[1:]:
             t = parameter.annotation
-            if t == inspect._empty: raise ValueError(f'Argument {arg_name} needs a type annotation.')
+            if t == inspect._empty:
+                raise ValueError(f'Argument {arg_name} needs a type annotation.')
             elif t in [str, float, int, bool] or (isinstance(t, type) and issubclass(t, Hparams)):
-                if parameter.default != inspect._empty: fields.append((arg_name, t, field(default=parameter.default)))
-                else: fields.append((arg_name, t))
+                if parameter.default != inspect._empty:
+                    fields.append((arg_name, t, field(default=parameter.default)))
+                else:
+                    fields.append((arg_name, t))
             else:
                 raise ValueError('Invalid branch type: {}'.format(parameter.annotation))
 
