@@ -46,9 +46,9 @@ class Branch(base.Branch):
         target_ones_mask = Mask.ones_like(target_model)
         
         # Do the morphism
-        target_sd = change_depth(src_model.state_dict(), target_model.state_dict(), mapping)
+        target_sd = change_depth(target_model_name, src_model.state_dict(), target_model.state_dict(), mapping)
         target_model.load_state_dict(target_sd)
-        target_mask = change_depth(src_mask, target_ones_mask, mapping)
+        target_mask = change_depth(target_model_name, src_mask, target_ones_mask, mapping)
         target_model = PrunedModel(target_model, target_mask)
 
         # Save and run a standard train
