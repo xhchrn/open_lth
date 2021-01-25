@@ -16,12 +16,16 @@ python3 open_lth.py lottery --default_hparams=cifar_resnet_20 --model_name cifar
 python3 open_lth.py lottery --default_hparams=cifar_resnet_20 --model_name cifar_resnet_20_32 --level=12  --rewinding_steps=500it
 
 # lottery_d1bce129beebea6ae76df1c61e53d1e6
-python3 open_lth.py lottery --num_workers 8 \
+python3 open_lth.py lottery --num_workers 4 \
   --default_hparams=cifar_resnet_20 --model_name cifar_resnet_32 \
   --rewinding_steps 1000it --level=12
 
+python3 open_lth.py lottery_branch change_depth --num_workers 4 --default_hparams=cifar_resnet_20 --model_name cifar_resnet_32 --rewinding_steps 1000it \
+    --target_model_name cifar_resnet44 --block_mapping "0:0;1:1,2;2:3,4;3:5;4:6" --levels=10
+
+
 # lottery_9177ecc955f02f6db621dca334ce6f72
-python3 open_lth.py lottery --num_workers 8 \
+python3 open_lth.py lottery --num_workers 4 \
   --default_hparams=cifar_resnet_20 --model_name cifar_resnet_44 \
   --rewinding_steps 1000it --level=12
 

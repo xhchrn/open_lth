@@ -45,7 +45,11 @@ class Mask(dict):
         total_weights = np.sum([v.size for v in self.numpy().values()]).item()
         total_unpruned = np.sum([np.sum(v) for v in self.numpy().values()]).item()
         with get_platform().open(paths.sparsity_report(output_location, suffix), 'w') as fp:
-            fp.write(json.dumps({'total': float(total_weights), 'unpruned': float(total_unpruned)}, indent=4))
+            fp.write(json.dumps({
+                'total': float(total_weights),
+                'unpruned': float(total_unpruned),
+                'sparsity_ratio': float(total_unpruned) / total_weights
+            }, indent=4))
 
     @staticmethod
     def load(output_location, suffix=''):
