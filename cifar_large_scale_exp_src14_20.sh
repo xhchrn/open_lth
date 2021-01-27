@@ -88,12 +88,13 @@ done
 export source_model="cifar_resnet_20"
 export target_model="cifar_resnet_44"
 export mapping_inter3="0:0;1:1,2,3;2:4,5,6"
-export mapping_inter2_head2="0:0;1:1,2,3,4;2:5,6"
-export mapping_inter2_tail2="0:0;1:1,2;2:3,4,5,6"
+# export mapping_inter2_head2="0:0;1:1,2,3,4;2:5,6"
+# export mapping_inter2_tail2="0:0;1:1,2;2:3,4,5,6"
 export mapping_head1="0:0;1:1,2,3,4,5;2:6"
-export mapping_head2="0:0;1:1,3,5;2:2,4,6"
+# export mapping_head2="0:0;1:1,3,5;2:2,4,6"
 export mapping_tail1="0:0;1:1;2:2,3,4,5,6"
-for mapping in $mapping_inter3 $mapping_inter2_head2 $mapping_inter2_tail2 $mapping_head1 $mapping_head2 $mapping_tail1; do
+# for mapping in $mapping_inter3 $mapping_inter2_head2 $mapping_inter2_tail2 $mapping_head1 $mapping_head2 $mapping_tail1; do
+for mapping in $mapping_inter3 $mapping_head1 $mapping_tail1; do
     python3 open_lth.py lottery_branch change_depth --num_workers 4 --default_hparams=cifar_resnet_20 --model_name $source_model --rewinding_steps 1000it --replicate=$replicate \
         --target_model_name $target_model --block_mapping "${mapping}" --levels=0-16
 done
@@ -101,15 +102,16 @@ done
 export source_model="cifar_resnet_20"
 export target_model="cifar_resnet_56"
 export mapping_inter4="0:0;1:1,2,3,4;2:5,6,7,8"
-export mapping_inter3_head2="0:0;1:1,2,3,4,5;2:6,7,8"
-export mapping_inter3_tail2="0:0;1:1,2,3;2:4,5,6,7,8"
-export mapping_inter2_head2="0:0;1:1,2,3,4,5,6;2:7,8"
+# export mapping_inter3_head2="0:0;1:1,2,3,4,5;2:6,7,8"
+# export mapping_inter3_tail2="0:0;1:1,2,3;2:4,5,6,7,8"
+# export mapping_inter2_head2="0:0;1:1,2,3,4,5,6;2:7,8"
 export mapping_inter2_head4="0:0;1:1,2,5,6;2:3,4,7,8"
-export mapping_inter2_tail2="0:0;1:1,2;2:3,4,5,6,7,8"
+# export mapping_inter2_tail2="0:0;1:1,2;2:3,4,5,6,7,8"
 export mapping_head1="0:0;1:1,2,3,4,5,6,7;2:8"
 export mapping_head2="0:0;1:1,3,5,7;2:2,4,6,8"
 export mapping_tail1="0:0;1:1;2:2,3,4,5,6,7,8"
-for mapping in $mapping_inter4 $mapping_inter3_head2 $mapping_inter3_tail2 $mapping_inter2_head2 $mapping_inter2_head4 $mapping_inter2_tail2 $mapping_head1 $mapping_head2 $mapping_tail1; do
+# for mapping in $mapping_inter4 $mapping_inter3_head2 $mapping_inter3_tail2 $mapping_inter2_head2 $mapping_inter2_head4 $mapping_inter2_tail2 $mapping_head1 $mapping_head2 $mapping_tail1; do
+for mapping in $mapping_inter4 $mapping_inter2_head4 $mapping_head1 $mapping_head2 $mapping_tail1; do
     python3 open_lth.py lottery_branch change_depth --num_workers 4 --default_hparams=cifar_resnet_20 --model_name $source_model --rewinding_steps 1000it --replicate=$replicate \
         --target_model_name $target_model --block_mapping "${mapping}" --levels=0-16
 done
