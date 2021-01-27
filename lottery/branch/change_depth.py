@@ -44,7 +44,7 @@ class Branch(base.Branch):
         target_model_hparams.model_name = target_model_name
         target_model = models.registry.get(target_model_hparams)
         target_ones_mask = Mask.ones_like(target_model)
-        
+
         # Do the morphism
         target_sd = change_depth(target_model_name, src_model.state_dict(), target_model.state_dict(), mapping)
         target_model.load_state_dict(target_sd)
