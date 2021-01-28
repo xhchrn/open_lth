@@ -7,14 +7,16 @@ import copy
 import numpy as np
 
 
-def change_depth(model_name, src, dst_sd, mappings):
-    if 'resnet' in model_name:
-        return change_depth_resnet(src, dst_sd, mappings)
+def change_depth(model_name, src_sd, dst_sd, mappings):
+    if 'resnet' in model_name and 'cifar' in model_name:
+        return change_depth_cifar_resnet(src_sd, dst_sd, mappings)
+    elif 'resnet' in model_name and 'imagenet' in model_name:
+        return change_depth_imagenet_resnet(src_sd, dst_sd, mappings)
     else:
         raise NotImplementedError(f'Depth morphism method is not implemeted yet for {model_name}')
 
 
-def change_depth_resnet(src_sd, dst_sd, mappings):
+def change_depth_cifar_resnet(src_sd, dst_sd, mapping):
     dst_sd = copy.deepcopy(dst_sd)
 
     # get the milestone for stages
@@ -51,6 +53,40 @@ def change_depth_resnet(src_sd, dst_sd, mappings):
                 dst_block_id = stage_id * dst_stage_len + dst_local_id
                 dst_key = copy.deepcopy(splitted_key)
                 dst_key[1] = str(dst_block_id)
+                dst_key = '.'.join(dst_key)
+                assert dst_key in dst_sd
+                dst_sd[dst_key] = v.clone()
+                overwritten_keys.append(dst_key)
+        else:
+            # directly copy the first conv and bn layer and the last linear layer
+            assert k in dst_sd
+            dst_sd[k] = v
+            overwritten_keys.append(k)
+
+    all_overwritten = True
+    for k in dst_sd.keys():
+        all_overwritten = all_overwritten and k in overwritten_keys
+    assert all_overwritten
+            
+    return dst_sd
+
+
+def change_depth_imagenet_resnet(src_sd, dst_sd, mappings):
+    dst_sd = copy.deepcopy(dst_sd)
+
+    overwritten_keys = []
+    
+    for k,v in src_sd.items():
+        if 'layer' in k:
+            splitted_key = k.split('.')
+            src_layer_id = int(splitted_key[1][-1])  # in range [1-4]
+            src_block_id = int(splitted_key[2])
+            
+            dst_block_id_list = mappings[src_layer_id-1].get(src_block_id, [])
+            
+            for dst_block_id in dst_block_id_list:
+                dst_key = copy.deepcopy(splitted_key)
+                dst_key[2] = str(dst_block_id)
                 dst_key = '.'.join(dst_key)
                 assert dst_key in dst_sd
                 dst_sd[dst_key] = v.clone()

@@ -35,7 +35,7 @@ class Branch(base.Branch):
         # A valid string format of a mapping is like:
         #   `0:0;1:1,2;2:3,4;3:5,6;4:7,8`
         if 'cifar' in target_model_name and 'resnet' in target_model_name:
-            mappings = [parse_block_mapping_for_stage(block_mapping)] * 3
+            mappings = parse_block_mapping_for_stage(block_mapping)
         elif 'imagenet' in target_model_name and 'resnet' in target_model_name:
             mappings = list(map(parse_block_mapping_for_stage, block_mapping.split('|')))
         else:
