@@ -7,14 +7,14 @@ import copy
 import numpy as np
 
 
-def change_depth(model_name, src, dst_sd, mapping):
+def change_depth(model_name, src, dst_sd, mappings):
     if 'resnet' in model_name:
-        return change_depth_resnet(src, dst_sd, mapping)
+        return change_depth_resnet(src, dst_sd, mappings)
     else:
         raise NotImplementedError(f'Depth morphism method is not implemeted yet for {model_name}')
 
 
-def change_depth_resnet(src_sd, dst_sd, mapping):
+def change_depth_resnet(src_sd, dst_sd, mappings):
     dst_sd = copy.deepcopy(dst_sd)
 
     # get the milestone for stages
@@ -45,7 +45,7 @@ def change_depth_resnet(src_sd, dst_sd, mapping):
                     break
             src_local_id = src_block_id - src_milestones[stage_id]
             
-            dst_local_id_list = mapping.get(src_local_id, [])
+            dst_local_id_list = mappings[stage_id].get(src_local_id, [])
             
             for dst_local_id in dst_local_id_list:
                 dst_block_id = stage_id * dst_stage_len + dst_local_id

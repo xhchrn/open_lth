@@ -11,6 +11,18 @@ from pruning.pruned_model import PrunedModel
 from training import train
 from lottery.branch.morphism import change_depth
 
+def parse_block_mapping_for_stage(string):
+    mapping = dict()
+    mapping_strs = string.split(';')
+    try:
+        for s in mapping_strs:
+            src_id_str, tgt_ids_str = s.split(':')
+            src_id = int(src_id_str)
+            tgt_ids = [int(t) for t in tgt_ids_str.split(',')]
+            mapping[src_id] = tgt_ids
+        return mapping
+    except:
+        raise RuntimeError('Invalid block mapping string.')
 
 class Branch(base.Branch):
     def branch_function(
@@ -22,16 +34,12 @@ class Branch(base.Branch):
         # Process the mapping
         # A valid string format of a mapping is like:
         #   `0:0;1:1,2;2:3,4;3:5,6;4:7,8`
-        mapping = dict()
-        mapping_strs = block_mapping.split(';')
-        try:
-            for s in mapping_strs:
-                src_id_str, tgt_ids_str = s.split(':')
-                src_id = int(src_id_str)
-                tgt_ids = [int(t) for t in tgt_ids_str.split(',')]
-                mapping[src_id] = tgt_ids
-        except:
-            raise RuntimeError('Invalid block mapping string.')
+        if 'cifar' in target_model_name and 'resnet' in target_model_name:
+            mappings = [parse_block_mapping_for_stage(block_mapping)] * 3
+        elif 'imagenet' in target_model_name and 'resnet' in target_model_name:
+            mappings = list(map(parse_block_mapping_for_stage, block_mapping.split('|')))
+        else:
+            raise NotImplementedError('Other mapping cases not implemented yet')
 
         # Load source model at `train_start_step`
         src_mask = Mask.load(self.level_root)
@@ -46,9 +54,9 @@ class Branch(base.Branch):
         target_ones_mask = Mask.ones_like(target_model)
 
         # Do the morphism
-        target_sd = change_depth(target_model_name, src_model.state_dict(), target_model.state_dict(), mapping)
+        target_sd = change_depth(target_model_name, src_model.state_dict(), target_model.state_dict(), mappings)
         target_model.load_state_dict(target_sd)
-        target_mask = change_depth(target_model_name, src_mask, target_ones_mask, mapping)
+        target_mask = change_depth(target_model_name, src_mask, target_ones_mask, mappings)
         target_model = PrunedModel(target_model, target_mask)
 
         # Save and run a standard train
