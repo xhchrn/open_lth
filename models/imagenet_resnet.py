@@ -71,7 +71,7 @@ class Model(base.Model):
         return (model_name.startswith('imagenet_resnet_') and
                 4 >= len(model_name.split('_')) >= 3 and
                 model_name.split('_')[2].isdigit() and
-                int(model_name.split('_')[2]) in [18, 34, 50, 101, 152, 200])
+                int(model_name.split('_')[2]) in [18, 26, 34, 50, 101, 152, 200])
 
     @staticmethod
     def get_model_from_name(model_name, initializer,  outputs=1000):
@@ -85,6 +85,7 @@ class Model(base.Model):
 
         num = int(model_name.split('_')[2])
         if num == 18: model_fn = partial(ResNet, torchvision.models.resnet.BasicBlock, [2, 2, 2, 2])
+        elif num == 26: model_fn = partial(ResNet, torchvision.models.resnet.BasicBlock, [2, 3, 4, 3])
         elif num == 34: model_fn = partial(ResNet, torchvision.models.resnet.BasicBlock, [3, 4, 6, 3])
         elif num == 50: model_fn = partial(ResNet, torchvision.models.resnet.Bottleneck, [3, 4, 6, 3])
         elif num == 101: model_fn = partial(ResNet, torchvision.models.resnet.Bottleneck, [3, 4, 23, 3])
