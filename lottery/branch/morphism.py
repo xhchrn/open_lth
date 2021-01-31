@@ -47,7 +47,7 @@ def change_depth_cifar_resnet(src_sd, dst_sd, mappings):
                     break
             src_local_id = src_block_id - src_milestones[stage_id]
             
-            dst_local_id_list = mappings[stage_id].get(src_local_id, [])
+            dst_local_id_list = mappings.get(src_local_id, [])
             
             for dst_local_id in dst_local_id_list:
                 dst_block_id = stage_id * dst_stage_len + dst_local_id
