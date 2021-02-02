@@ -98,7 +98,7 @@ class Strategy(base.Strategy):
 
         score_vector = np.concatenate([v.reshape(-1) for k, v in scores.items()])
         norm = np.sum(score_vector)
-        for k in scores.items():
+        for k in scores.keys():
             scores[k] /= norm
 
         # Clean up
