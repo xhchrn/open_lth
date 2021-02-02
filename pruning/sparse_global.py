@@ -33,6 +33,7 @@ class Strategy(base.Strategy):
     def prune(pruning_hparams: PruningHparams,
               trained_model: models.base.Model,
               current_mask: Mask = None,
+              training_hparams: hparams.TrainingHparams = None,
               dataset_hparams: hparams.DatasetHparams = None,
               data_order_seed: int = None):
         current_mask = Mask.ones_like(trained_model).numpy() if current_mask is None else current_mask.numpy()
