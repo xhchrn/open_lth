@@ -38,6 +38,10 @@ class Platform(Hparams):
         return torch.device(self.device_str)
 
     @property
+    def cpu_device(self):
+        return torch.device('cpu')
+
+    @property
     def is_parallel(self):
         return torch.cuda.is_available() and torch.cuda.device_count() > 1
 
