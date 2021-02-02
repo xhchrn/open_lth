@@ -12,6 +12,7 @@ from training import train
 from pruning import base
 from pruning.mask import Mask
 from pruning.pruned_model import PrunedModel
+from platforms.platform import get_platform
 
 
 @dataclasses.dataclass
@@ -79,7 +80,7 @@ class Strategy(base.Strategy):
                   training_hparams: hparams.TrainingHparams,
                   dataset_hparams: hparams.DatasetHparams,
                   data_order_seed: int = None):
-        pruned_model = PrunedModel(trained_model, current_mask)
+        pruned_model = PrunedModel(trained_model, current_mask).to(device=get_platform().torch_device)
         pruned_model._clear_grad()
         pruned_model._enable_mask_gradient()
 
