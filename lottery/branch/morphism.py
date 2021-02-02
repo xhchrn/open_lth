@@ -18,7 +18,7 @@ def change_depth(model_name, src_sd, dst_sd, mappings):
         raise NotImplementedError(f'Depth morphism method is not implemeted yet for {model_name}')
 
 
-def change_depth_vgg_cifar(src_sd, dst_sd, mappings):
+def change_depth_cifar_vgg(src_sd, dst_sd, mappings):
     dst_sd = copy.deepcopy(dst_sd)
 
     src_layer_ids = set()
