@@ -29,7 +29,12 @@ class Strategy(base.Strategy):
         return PruningHparams
 
     @staticmethod
-    def prune(pruning_hparams: PruningHparams, trained_model: models.base.Model, current_mask: Mask = None):
+    # def prune(pruning_hparams: PruningHparams, trained_model: models.base.Model, current_mask: Mask = None):
+    def prune(pruning_hparams: PruningHparams,
+              trained_model: models.base.Model,
+              current_mask: Mask = None,
+              dataset_hparams: hparams.DatasetHparams = None,
+              data_order_seed: int = None):
         current_mask = Mask.ones_like(trained_model).numpy() if current_mask is None else current_mask.numpy()
 
         # Determine the number of weights that need to be pruned.
