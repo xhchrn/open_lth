@@ -66,7 +66,7 @@ class Strategy(base.Strategy):
         threshold = np.sort(np.abs(score_vector))[number_of_weights_to_prune]
 
         new_mask = Mask({k: np.where(np.abs(v) > threshold, current_mask_numpy[k], np.zeros_like(v))
-                         for k, v in score.items()})
+                         for k, v in scores.items()})
         for k in current_mask_numpy:
             if k not in new_mask:
                 new_mask[k] = current_mask_numpy[k]
