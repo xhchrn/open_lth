@@ -353,7 +353,7 @@ def standard_train(
 def accumulate_gradient(
   model: Model,
   dataset_hparams: hparams.DatasetHparams,
-  data_order_seed: int = None
+  data_order_seed: int = None,
   verbose: bool = True,
   suffix: str = ''
 ):
