@@ -94,11 +94,9 @@ class Strategy(base.Strategy):
         scores = dict()
         for name, param in pruned_model.model.named_parameters():
             if hasattr(pruned_model, PrunedModel.to_mask_name(name)) and name in prunable_tensors:
-                # mask = hasattr(pruned_model, PrunedModel.to_mask_name(name))
-                # assert mask.grad is not None
                 scores[name] = (param.grad * param).abs().clone().cpu().detach().numpy()
 
-        score_vector = np.concatenate(scores.values().reshape(-1))
+        score_vector = np.concatenate([v.reshape(-1) for k, v in scores.items()])
         norm = np.sum(score_vector)
         for k in scores.items():
             scores[k] /= norm
