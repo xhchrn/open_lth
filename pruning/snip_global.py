@@ -102,7 +102,7 @@ class Strategy(base.Strategy):
             scores[k] /= norm
 
         # Clean up
-        model._clear_grad()
+        pruned_model._clear_grad()
         # model._disable_mask_gradient()
 
         return scores
