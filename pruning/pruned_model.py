@@ -36,6 +36,25 @@ class PrunedModel(Model):
             if hasattr(self, PrunedModel.to_mask_name(name)):
                 param.data *= getattr(self, PrunedModel.to_mask_name(name))
 
+    def _enable_mask_gradient(self):
+        for name, param in self.model.named_parameters():
+            if hasattr(self, PrunedModel.to_mask_name(name)):
+                getattr(self, PrunedModel.to_mask_name(name)).requires_grad = True
+
+    def _disable_mask_gradient(self):
+        for name, param in self.model.named_parameters():
+            if hasattr(self, PrunedModel.to_mask_name(name)):
+                getattr(self, PrunedModel.to_mask_name(name)).requires_grad = False
+
+    def _clear_grad(self):
+        for name, param in self.model.named_parameters():
+            if param.grad:
+                param.grad.data.zero_()
+            if hasattr(self, PrunedModel.to_mask_name(name)):
+                mask = getattr(self, PrunedModel.to_mask_name(name))
+                if mask.grad:
+                    mask.grad.data.zero_()
+
     def forward(self, x):
         self._apply_mask()
         return self.model.forward(x)

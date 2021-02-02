@@ -8,12 +8,14 @@ from lottery.branch import randomly_prune
 from lottery.branch import randomly_reinitialize
 from lottery.branch import retrain
 from lottery.branch import change_depth
+from lottery.branch import prune_early
 
 registered_branches = {
     'randomly_prune': randomly_prune.Branch,
     'randomly_reinitialize': randomly_reinitialize.Branch,
     'retrain': retrain.Branch,
     'change_depth': change_depth.Branch,
+    'prune_early': prune_early.Branch,
 }
 
 

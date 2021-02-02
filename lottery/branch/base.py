@@ -76,6 +76,12 @@ class Branch(Runner):
 
         return self.lottery_desc.run_path(self.replicate, self.level)
 
+    @property
+    def pretrain_root(self) -> str:
+        """ The root of the pretrain experiment."""
+
+        return self.lottery_desc.run_path(self.replicate, 'pretrain')
+
     # Interface that deals with command line arguments.
     @dataclass
     class ArgHparams(Hparams):

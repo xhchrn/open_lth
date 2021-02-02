@@ -51,6 +51,14 @@ class Mask(dict):
                 'sparsity_ratio': float(total_unpruned) / total_weights
             }, indent=4))
 
+    def get_sparsity_ratio(self):
+        if not get_platform().is_primary_process: return
+
+        # Get sparsity ratio
+        total_weights = np.sum([v.size for v in self.numpy().values()]).item()
+        total_unpruned = np.sum([np.sum(v) for v in self.numpy().values()]).item()
+        return float(total_unpruned) / total_weights
+
     @staticmethod
     def load(output_location, suffix=''):
         if not Mask.exists(output_location, suffix):

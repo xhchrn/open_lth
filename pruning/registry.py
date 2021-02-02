@@ -7,11 +7,12 @@ import copy
 from functools import partial
 
 from foundations.hparams import PruningHparams
-from pruning import sparse_global, sparse_global_orig
+from pruning import sparse_global, sparse_global_orig, snip_global
 
 registered_strategies = {
     'sparse_global': sparse_global.Strategy,
-    'sparse_global_orig': sparse_global_orig.Strategy
+    'sparse_global_orig': sparse_global_orig.Strategy,
+    'snip_global': snip_global.Strategy,
 }
 
 
