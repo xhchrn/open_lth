@@ -58,10 +58,7 @@ class Branch(base.Branch):
         )
         new_mask.save(self.branch_root)
 
-        repruned_model = PrunedModel(
-            model.to(device=get_platform().torch_device),
-            new_mask.to(device=get_platform().torch_device)
-        )
+        repruned_model = PrunedModel(model.to(device=get_platform().torch_device), new_mask)
 
         # Run training
         train.standard_train(repruned_model, self.branch_root, self.lottery_desc.dataset_hparams,
