@@ -48,11 +48,11 @@ class PrunedModel(Model):
 
     def _clear_grad(self):
         for name, param in self.model.named_parameters():
-            if param.grad:
+            if param.grad is not None:
                 param.grad.data.zero_()
             if hasattr(self, PrunedModel.to_mask_name(name)):
                 mask = getattr(self, PrunedModel.to_mask_name(name))
-                if mask.grad:
+                if mask.grad is not None:
                     mask.grad.data.zero_()
 
     def forward(self, x):
