@@ -48,8 +48,8 @@ class Strategy(base.Strategy):
             prunable_tensors -= set(pruning_hparams.pruning_layers_to_ignore.split(','))
 
         # Get the model score.
-        scores = self.get_score(trained_model, current_mask, prunable_tensors,
-                                dataset_hparams, data_order_seed)
+        scores = Strategy.get_score(trained_model, current_mask, prunable_tensors,
+                                    dataset_hparams, data_order_seed)
 
         # Get the model weights.
         # weights = {k: v.clone().cpu().detach().numpy()
@@ -69,8 +69,8 @@ class Strategy(base.Strategy):
 
         return new_mask
 
-    def get_score(self,
-                  trained_model: models.base.Model,
+    @staticmethod
+    def get_score(trained_model: models.base.Model,
                   current_mask: Mask,
                   prunable_tensors: set,
                   dataset_hparams: hparams.DatasetHparams,
