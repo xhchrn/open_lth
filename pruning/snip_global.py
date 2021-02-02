@@ -8,6 +8,7 @@ import numpy as np
 
 from foundations import hparams
 import models.base
+from training import train
 from pruning import base
 from pruning.mask import Mask
 from pruning.pruned_model import PrunedModel
