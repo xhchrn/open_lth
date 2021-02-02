@@ -55,6 +55,11 @@ class PrunedModel(Model):
                 if mask.grad is not None:
                     mask.grad.data.zero_()
 
+    def _linearize(self):
+        for name, param in self.model.named_parameters():
+            if hasattr(self, PrunedModel.to_mask_name(name)):
+                getattr(self, PrunedModel.to_mask_name(name)).requires_grad = False
+
     def forward(self, x):
         self._apply_mask()
         return self.model.forward(x)
