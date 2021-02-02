@@ -51,9 +51,7 @@ class Branch(base.Branch):
         pruning_hparams.pruning_strategy = strategy
         pruning_hparams.pruning_fraction = target_pruning_fraction
         new_mask = pruning.registry.get(pruning_hparams)(
-            model, Mask.ones_like(model),
-            dataset_hparam = self.lottery_desc.dataset_hparams,
-            data_order_ = seed
+            model, Mask.ones_like(model), self.lottery_desc.dataset_hparams, seed
         )
         new_mask.save(self.branch_root)
 
