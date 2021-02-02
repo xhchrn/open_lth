@@ -5,7 +5,7 @@
 
 import abc
 
-from foundations.hparams import PruningHparams, DatasetHparams
+from foundations.hparams import PruningHparams, DatasetHparams, TrainingHparams
 from models import base
 from pruning.mask import Mask
 
@@ -21,7 +21,7 @@ class Strategy(abc.ABC):
     def prune(pruning_hparams: PruningHparams,
               trained_model: base.Model,
               current_mask: Mask = None,
-              training_hparams: hparams.TrainingHparams = None,
+              training_hparams: TrainingHparams = None,
               dataset_hparams: DatasetHparams = None,
               data_order_seed: int = None) -> Mask:
         pass
