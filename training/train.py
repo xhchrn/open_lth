@@ -133,6 +133,7 @@ def train(
 
 
 def accumulate(
+    training_hparams: hparams.TrainingHparams,
     model: Model,
     train_loader: DataLoader,
     data_order_seed: int = None,
@@ -142,6 +143,7 @@ def accumulate(
     """Accumulate the gradient for one training epoch.
 
     Args:
+      * training_hparams: The training hyperparameters whose schema is specified in hparams.py.
       * model: The model to train. Must be a models.base.Model
       * train_loader: The training data. Must be a datasets.base.DataLoader
       * data_order_seed: The RNG seed for data shuffling.
@@ -351,6 +353,7 @@ def standard_train(
 
 
 def accumulate_gradient(
+  training_hparams: hparams.TrainingHparams,
   model: Model,
   dataset_hparams: hparams.DatasetHparams,
   data_order_seed: int = None,
@@ -370,7 +373,7 @@ def accumulate_gradient(
     # callbacks = standard_callbacks.standard_callbacks(
     #     training_hparams, train_loader, test_loader, start_step=start_step,
     #     verbose=verbose, evaluate_every_epoch=evaluate_every_epoch, suffix=suffix)
-    accumulate(model, train_loader, data_order_seed, suffix=suffix)
+    accumulate(training_hparams, model, train_loader, data_order_seed, suffix=suffix)
 
 
 def distill_train(

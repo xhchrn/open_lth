@@ -21,6 +21,7 @@ class Strategy(abc.ABC):
     def prune(pruning_hparams: PruningHparams,
               trained_model: base.Model,
               current_mask: Mask = None,
+              training_hparams: hparams.TrainingHparams = None,
               dataset_hparams: DatasetHparams = None,
               data_order_seed: int = None) -> Mask:
         pass

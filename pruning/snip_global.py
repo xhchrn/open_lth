@@ -34,6 +34,7 @@ class Strategy(base.Strategy):
     def prune(pruning_hparams: PruningHparams,
               trained_model: models.base.Model,
               current_mask: Mask = None,
+              training_hparams: hparams.TrainingHparams,
               dataset_hparams: hparams.DatasetHparams = None,
               data_order_seed: int = None):
         current_mask = Mask.ones_like(trained_model) if current_mask is None else current_mask
@@ -51,7 +52,7 @@ class Strategy(base.Strategy):
 
         # Get the model score.
         scores = Strategy.get_score(trained_model, current_mask, prunable_tensors,
-                                    dataset_hparams, data_order_seed)
+                                    training_hparams, dataset_hparams, data_order_seed)
 
         # Get the model weights.
         # weights = {k: v.clone().cpu().detach().numpy()
@@ -75,6 +76,7 @@ class Strategy(base.Strategy):
     def get_score(trained_model: models.base.Model,
                   current_mask: Mask,
                   prunable_tensors: set,
+                  training_hparams: hparams.TrainingHparams,
                   dataset_hparams: hparams.DatasetHparams,
                   data_order_seed: int = None):
         pruned_model = PrunedModel(trained_model, current_mask)
@@ -82,7 +84,10 @@ class Strategy(base.Strategy):
         pruned_model._enable_mask_gradient()
 
         # Calculate the gradient
-        train.accumulate_gradient(pruned_model, dataset_hparams, data_order_seed, verbose=False)
+        train.accumulate_gradient(
+            training_hparams, pruned_model,
+            dataset_hparams, data_order_seed, verbose=False
+        )
 
         # Calculate the score
         scores = dict()
