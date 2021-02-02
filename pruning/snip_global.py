@@ -35,10 +35,11 @@ class Strategy(base.Strategy):
               current_mask: Mask = None,
               dataset_hparams: hparams.DatasetHparams = None,
               data_order_seed: int = None):
-        current_mask = Mask.ones_like(trained_model).numpy() if current_mask is None else current_mask.numpy()
+        current_mask = Mask.ones_like(trained_model) if current_mask is None else current_mask
+        current_mask_numpy = current_mask.numpy()
 
         # Determine the number of weights that need to be pruned.
-        number_of_remaining_weights = np.sum([np.sum(v) for v in current_mask.values()])
+        number_of_remaining_weights = np.sum([np.sum(v) for v in current_mask_numpy.values()])
         number_of_weights_to_prune = np.ceil(
             pruning_hparams.pruning_fraction * number_of_remaining_weights).astype(int)
 
@@ -58,14 +59,14 @@ class Strategy(base.Strategy):
 
         # Create a vector of all the unpruned weights in the model.
         # weight_vector = np.concatenate([v[current_mask[k] == 1] for k, v in weights.items()])
-        score_vector = np.concatenate([v[current_mask[k] == 1] for k, v in scores.items()])
+        score_vector = np.concatenate([v[current_mask_numpy[k] == 1] for k, v in scores.items()])
         threshold = np.sort(np.abs(score_vector))[number_of_weights_to_prune]
 
-        new_mask = Mask({k: np.where(np.abs(v) > threshold, current_mask[k], np.zeros_like(v))
+        new_mask = Mask({k: np.where(np.abs(v) > threshold, current_mask_numpy[k], np.zeros_like(v))
                          for k, v in score.items()})
-        for k in current_mask:
+        for k in current_mask_numpy:
             if k not in new_mask:
-                new_mask[k] = current_mask[k]
+                new_mask[k] = current_mask_numpy[k]
 
         return new_mask
 
