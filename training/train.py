@@ -370,8 +370,7 @@ def accumulate_gradient(
     # callbacks = standard_callbacks.standard_callbacks(
     #     training_hparams, train_loader, test_loader, start_step=start_step,
     #     verbose=verbose, evaluate_every_epoch=evaluate_every_epoch, suffix=suffix)
-    accumulate(training_hparams, model, train_loader, output_location, callbacks, start_step=start_step, suffix=suffix)
-    
+    accumulate(model, train_loader, data_order_seed, suffix=suffix)
 
 
 def distill_train(
