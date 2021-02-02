@@ -82,7 +82,7 @@ class Strategy(base.Strategy):
                   data_order_seed: int = None):
         pruned_model = PrunedModel(trained_model, current_mask).to(device=get_platform().torch_device)
         pruned_model._clear_grad()
-        pruned_model._enable_mask_gradient()
+        # pruned_model._enable_mask_gradient()
 
         # Calculate the gradient
         train.accumulate_gradient(
@@ -94,9 +94,9 @@ class Strategy(base.Strategy):
         scores = dict()
         for name, param in pruned_model.model.named_parameters():
             if hasattr(pruned_model, PrunedModel.to_mask_name(name)) and name in prunable_tensors:
-                mask = hasattr(pruned_model, PrunedModel.to_mask_name(name))
-                assert mask.grad is not None
-                scores[name] = mask.grad.abs().clone().cpu().detach().numpy()
+                # mask = hasattr(pruned_model, PrunedModel.to_mask_name(name))
+                # assert mask.grad is not None
+                scores[name] = (param.grad * param).abs().clone().cpu().detach().numpy()
 
         score_vector = np.concatenate(scores.values().reshape(-1))
         norm = np.sum(score_vector)
@@ -105,7 +105,7 @@ class Strategy(base.Strategy):
 
         # Clean up
         model._clear_grad()
-        model._disable_mask_gradient()
+        # model._disable_mask_gradient()
 
         return scores
 
