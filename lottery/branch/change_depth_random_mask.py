@@ -29,7 +29,7 @@ class Branch(base.Branch):
         self,
         target_model_name: str = None,
         block_mapping: str = None,
-        seed: str = None,
+        seed: int = None,
         start_at_step_zero: bool = False
     ):
         # Process the mapping
