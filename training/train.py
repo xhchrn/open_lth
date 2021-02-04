@@ -211,7 +211,7 @@ def grasp(
     train_loader.shuffle(data_order_seed)
 
     # First gradient without computational graph
-    stopped_gradients = 0
+    stopped_grads = 0
     for it, (examples, labels) in enumerate(train_loader):
 
         examples = examples.to(device=get_platform().torch_device)
