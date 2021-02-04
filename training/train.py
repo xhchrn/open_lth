@@ -475,7 +475,7 @@ def run_grasp(
     # callbacks = standard_callbacks.standard_callbacks(
     #     training_hparams, train_loader, test_loader, start_step=start_step,
     #     verbose=verbose, evaluate_every_epoch=evaluate_every_epoch, suffix=suffix)
-    grasp(training_hparams, model, parameter_lis, train_loader, data_order_seed, suffix=suffix)
+    grasp(training_hparams, model, parameter_list, train_loader, data_order_seed, suffix=suffix)
 
 
 def distill_train(
