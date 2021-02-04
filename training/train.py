@@ -244,7 +244,7 @@ def grasp(
         #         scaled_loss.backward()
         # else:
         #     loss.backward()
-        grads = torch.autograd.grad(loss, parameter_list, create_graph=False)
+        grads = torch.autograd.grad(loss, parameter_list, create_graph=True)
         flatten_grads = torch.cat([g.reshape(-1) for g in grads if g is not None])
 
         gnorm = (stopped_grads * flatten_grads).sum()
