@@ -131,8 +131,8 @@ def change_depth_cifar_resnet(src_sd, dst_sd, mappings, seed=None, permute_copy=
                 assert dst_key in dst_sd
                 if j > 0 and permute_copy:
                     dst_sd[dst_key] = shuffle_tensor(v.clone(), seed=seed + permute_counter)
+                    print(f'permuted with seed {seed+permute_counter}!')
                     permute_counter += 1
-                    print('permuted!')
                 else:
                     dst_sd[dst_key] = v.clone()
                 overwritten_keys.append(dst_key)
