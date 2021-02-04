@@ -83,9 +83,14 @@ class Strategy(base.Strategy):
         pruned_model = PrunedModel(trained_model, current_mask).to(device=get_platform().torch_device)
         pruned_model._clear_grad()
 
+        parameter_list = []
+        for name, param in pruned_model.model.named_parameters():
+            if hasattr(pruned_model, PrunedModel.to_mask_name(name)) and name in prunable_tensors:
+                parameter_list.append(param)
+
         # Calculate the gradient
-        train.accumulate_gradient(
-            training_hparams, pruned_model,
+        train.run_grasp(
+            training_hparams, pruned_model, parameter_list,
             dataset_hparams, data_order_seed, verbose=False
         )
 
@@ -93,10 +98,10 @@ class Strategy(base.Strategy):
         scores = dict()
         for name, param in pruned_model.model.named_parameters():
             if hasattr(pruned_model, PrunedModel.to_mask_name(name)) and name in prunable_tensors:
-                scores[name] = (param.grad * param).abs().clone().cpu().detach().numpy()
+                scores[name] = (param.grad * param.data).clone().cpu().detach().numpy()
 
         score_vector = np.concatenate([v.reshape(-1) for k, v in scores.items()])
-        norm = np.sum(score_vector)
+        norm = np.abs(np.sum(score_vector)) + 1e-10  # for computation stability
         for k in scores.keys():
             scores[k] /= norm
 
