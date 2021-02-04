@@ -5,11 +5,12 @@
 
 import copy
 import numpy as np
+from utils.tensor_utils import shuffle_tensor
 
 
-def change_depth(model_name, src_sd, dst_sd, mappings):
+def change_depth(model_name, src_sd, dst_sd, mappings, seed=None, permute_copy=False):
     if 'resnet' in model_name and 'cifar' in model_name:
-        return change_depth_cifar_resnet(src_sd, dst_sd, mappings)
+        return change_depth_cifar_resnet(src_sd, dst_sd, mappings, seed=seed, permute_copy=permute_copy)
     elif 'resnet' in model_name and 'imagenet' in model_name:
         return change_depth_imagenet_resnet(src_sd, dst_sd, mappings)
     elif 'vgg' in model_name and 'cifar' in model_name:
@@ -87,7 +88,7 @@ def change_depth_cifar_vgg(src_sd, dst_sd, mappings):
     return dst_sd
 
 
-def change_depth_cifar_resnet(src_sd, dst_sd, mappings):
+def change_depth_cifar_resnet(src_sd, dst_sd, mappings, seed=None, permute_copy=False):
     dst_sd = copy.deepcopy(dst_sd)
 
     # get the milestone for stages
@@ -120,13 +121,16 @@ def change_depth_cifar_resnet(src_sd, dst_sd, mappings):
 
             dst_local_id_list = mappings.get(src_local_id, [])
 
-            for dst_local_id in dst_local_id_list:
+            for j, dst_local_id in enumerate(dst_local_id_list):
                 dst_block_id = stage_id * dst_stage_len + dst_local_id
                 dst_key = copy.deepcopy(splitted_key)
                 dst_key[1] = str(dst_block_id)
                 dst_key = '.'.join(dst_key)
                 assert dst_key in dst_sd
-                dst_sd[dst_key] = v.clone()
+                if j > 0 and permute_copy:
+                    dst_sd[dst_key] = shuffle_tensor(v.clone(), seed=seed)
+                else:
+                    dst_sd[dst_key] = v.clone()
                 overwritten_keys.append(dst_key)
         else:
             # directly copy the first conv and bn layer and the last linear layer
