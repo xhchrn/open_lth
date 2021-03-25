@@ -43,36 +43,38 @@ class Branch(base.Branch):
 
                 # Reset the masks of any layers that shouldn't be pruned.
                 if layers_to_ignore:
-                    for k in layers_to_ignore.split(','): new_mask[k] = torch.ones_like(mask[k])
+                    for k in layers_to_ignore.split(','):
+                        new_mask[k] = torch.ones_like(new_mask[k])
 
                 # Save the new mask.
                 new_mask.save(working_dir)
 
+                # Determine the start step.
+                if start_at == 'init':
+                    start_step = self.lottery_desc.str_to_step('0ep')
+                    state_step = start_step
+                elif start_at == 'end':
+                    start_step = self.lottery_desc.str_to_step('0ep')
+                    state_step = self.lottery_desc.train_end_step
+                elif start_at == 'rewind':
+                    start_step = self.lottery_desc.train_start_step
+                    state_step = start_step
+                else:
+                    raise ValueError(f'Invalid starting point {start_at}')
+
+                # Train the model with the new mask.
+                model = PrunedModel(
+                    models.registry.load(self.level_root, state_step, self.lottery_desc.model_hparams),
+                    new_mask
+                )
+                train.standard_train(model, working_dir,
+                                     self.lottery_desc.dataset_hparams,
+                                     self.lottery_desc.training_hparams,
+                                     start_step=start_step,
+                                     verbose=self.verbose)
+
                 runs_counter += 1
 
-        # Determine the start step.
-        if start_at == 'init':
-            start_step = self.lottery_desc.str_to_step('0ep')
-            state_step = start_step
-        elif start_at == 'end':
-            start_step = self.lottery_desc.str_to_step('0ep')
-            state_step = self.lottery_desc.train_end_step
-        elif start_at == 'rewind':
-            start_step = self.lottery_desc.train_start_step
-            state_step = start_step
-        else:
-            raise ValueError(f'Invalid starting point {start_at}')
-
-        # Train the model with the new mask.
-        model = PrunedModel(
-            models.registry.load(self.level_root, state_step, self.lottery_desc.model_hparams),
-            mask
-        )
-        train.standard_train(model, working_dir,
-                             self.lottery_desc.dataset_hparams,
-                             self.lottery_desc.training_hparams,
-                             start_step=start_step,
-                             verbose=self.verbose)
 
     @staticmethod
     def description():
