@@ -65,8 +65,8 @@ def random_mask_tensor_alpha(tensor: torch.Tensor, alpha: float, seed: int = Non
     num_pruned = int((tensor == 0).sum().item())
     new_score = torch.rand(size=tensor.size(), dtype=torch.float32)
     new_score[tensor == 0] *= alpha
-    threshold = torch.sort(new_score.reshape(-1))[num_pruned]
-    new_mask = (new_score > threshold).to(dtype=tensor.dtype, device=tensor.get_device())
+    threshold = torch.sort(new_score.reshape(-1))[0][num_pruned]
+    new_mask = (new_score > threshold).to(dtype=tensor.dtype, device=tensor.device)
     return new_mask
 
 

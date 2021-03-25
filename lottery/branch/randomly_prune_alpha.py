@@ -31,10 +31,10 @@ class Branch(base.Branch):
 
         runs_counter = 0
         for a, alpha in enumerate(alphas):
-            for r in range(1e10):
+            for r in range(int(1e10)):
                 if runs_counter >= runs:
                     break
-                working_dir = os.path.join(self.branch_root, f'alpha_{alpha}', f'run_{i}')
+                working_dir = os.path.join(self.branch_root, f'alpha_{alpha}', f'run_{r}')
                 if os.path.exists(working_dir) and not overwrite:
                     continue
 
@@ -76,8 +76,7 @@ class Branch(base.Branch):
 
     @staticmethod
     def description():
-        return "Randomly prune the model, with `alphas` controlling the simiarity "
-               "to (uniform) random pruning or a winning ticket."
+        return "Randomly prune the model, with `alphas` controlling the simiarity to (uniform) random pruning or a winning ticket."
 
     @staticmethod
     def name():
