@@ -54,3 +54,31 @@ def shuffle_state_dict(state_dict: typing.Dict[str, torch.Tensor], seed: int = N
     for i, k in enumerate(sorted(state_dict.keys())):
         output[k] = shuffle_tensor(state_dict[k], seed=None if seed is None else seed+i)
     return output
+
+
+def random_mask_tensor_alpha(tensor: torch.Tensor, alpha: float, seed: int = None):
+    """Randomly shuffle the elements of a tensor, with `alpha` controlling
+       its similarity to a (uniform) random mask (alpha=0) or a winning
+       ticket (alpha=1)."""
+
+    shape = tensor.shape
+    num_pruned = int((tensor == 0).sum().item())
+    new_score = torch.rand(size=tensor.size(), dtype=torch.float32)
+    new_score[tensor == 0] *= alpha
+    threshold = torch.sort(new_score.reshape(-1))[num_pruned]
+    new_mask = (new_score > threshold).to(dtype=tensor.dtype, device=tensor.get_device())
+    return new_mask
+
+
+def random_mask_state_dict_alpha(state_dict: typing.Dict[str, torch.Tensor],
+                                 alpha: float,
+                                 seed: int = None):
+    """Randomly mask each of the tensors in a state_dict, with `alpha` controlling
+       its similarity to a (uniform) random mask (alpha=0) or a winning ticket (alpha=1)."""
+
+    output = {}
+    for i, k in enumerate(sorted(state_dict.keys())):
+        output[k] = random_mask_tensor_alpha(state_dict[k],
+                                             alpha,
+                                             seed=None if seed is None else seed+i)
+    return output
