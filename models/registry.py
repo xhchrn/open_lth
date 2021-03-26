@@ -8,7 +8,7 @@ import torch
 from foundations import paths
 from foundations.hparams import ModelHparams
 from foundations.step import Step
-from models import cifar_resnet, cifar_vgg, mnist_lenet, mnist_lenet5, imagenet_resnet
+from models import cifar_resnet, cifar_vgg, cifar_vggnfc, mnist_lenet, mnist_lenet5, imagenet_resnet
 from models import cifar_score_resnet
 from models import bn_initializers, initializers
 from platforms.platform import get_platform
@@ -19,6 +19,7 @@ registered_models = [
     cifar_resnet.Model,
     cifar_score_resnet.Model,
     cifar_vgg.Model,
+    cifar_vggnfc.Model,
     imagenet_resnet.Model
 ]
 
