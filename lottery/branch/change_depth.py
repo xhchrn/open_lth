@@ -38,6 +38,8 @@ class Branch(base.Branch):
             mappings = parse_block_mapping_for_stage(block_mapping)
         elif 'imagenet' in target_model_name and 'resnet' in target_model_name:
             mappings = list(map(parse_block_mapping_for_stage, block_mapping.split('|')))
+        elif 'cifar' in target_model_name and 'vggnfc' in target_model_name:
+            mappings = parse_block_mapping_for_stage(block_mapping)
         elif 'cifar' in target_model_name and 'vgg' in target_model_name:
             mappings = list(map(parse_block_mapping_for_stage, block_mapping.split('|')))
         else:
