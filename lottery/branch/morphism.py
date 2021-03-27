@@ -32,7 +32,7 @@ def change_depth_mnist_lenet(src_sd, dst_sd, mappings):
         if 'layers' not in k:  # final linear layer
             dst_sd[k] = v.clone()
             overwritten_keys.append(k)
-            print('not classifier, skipped')
+            print('{} not classifier, skipped'.format(k))
             continue
 
         # Lenet FC layers except final fc
@@ -45,7 +45,7 @@ def change_depth_mnist_lenet(src_sd, dst_sd, mappings):
             dst_k = '.'.join(new_split_k)
             dst_sd[dst_k] = v.clone()
             overwritten_keys.append(dst_k)
-            print('{} -> {}'.format(src_fc_id, dst_fc_id))
+            print('{} -> {}'.format(k, dst_k))
 
     all_overwritten = True
     for k in dst_sd.keys():
@@ -64,7 +64,7 @@ def change_depth_cifar_vggnfc(src_sd, dst_sd, mappings):
         if 'classifier' not in k:  # final linear layer
             dst_sd[k] = v.clone()
             overwritten_keys.append(k)
-            print('not classifier, skipped')
+            print('{} not classifier, skipped'.format(k))
             continue
 
         # VGG FC Layers in classifier
@@ -77,7 +77,7 @@ def change_depth_cifar_vggnfc(src_sd, dst_sd, mappings):
             dst_k = '.'.join(new_split_k)
             dst_sd[dst_k] = v.clone()
             overwritten_keys.append(dst_k)
-            print('{} -> {}'.format(src_fc_id, dst_fc_id))
+            print('{} -> {}'.format(k, dst_k))
 
     all_overwritten = True
     for k in dst_sd.keys():
