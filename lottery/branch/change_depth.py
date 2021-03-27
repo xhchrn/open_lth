@@ -42,6 +42,8 @@ class Branch(base.Branch):
             mappings = parse_block_mapping_for_stage(block_mapping)
         elif 'cifar' in target_model_name and 'vgg' in target_model_name:
             mappings = list(map(parse_block_mapping_for_stage, block_mapping.split('|')))
+        elif 'mnist' in target_model_name and 'lenet' in target_model_name:
+            mappings = parse_block_mapping_for_stage(block_mapping)
         else:
             raise NotImplementedError('Other mapping cases not implemented yet')
 
