@@ -64,7 +64,7 @@ class Model(base.Model):
         for x in config:
             out_planes = x if isinstance(x, int) else x[0]
             stride = 1 if isinstance(x, int) else x[1]
-            layers.append(Block(in_planes, out_planes, stride))
+            layers.append(Model.Block(in_planes, out_planes, stride))
             in_planes = out_planes
         return nn.Sequential(*layers)
 
