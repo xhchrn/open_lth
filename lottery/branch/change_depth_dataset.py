@@ -69,7 +69,7 @@ class Branch(base.Branch):
         if target_dataset_name is not None:
             target_dataset_hparams.dataset_name = target_dataset_name
         train.standard_train(target_model, self.branch_root, target_dataset_hparams,
-                             self.lottery_desc.training_hparams, start_step=start_step, verbose=self.verbose)
+                             self.lottery_desc.training_hparams, start_step=None, verbose=self.verbose)
 
     @staticmethod
     def description():
