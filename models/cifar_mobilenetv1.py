@@ -85,7 +85,7 @@ class Model(base.Model):
     @staticmethod
     def is_valid_model_name(model_name):
         return (model_name.startswith('cifar_mobilenetv1') and
-                4 > len(model_name.split('_')) > 2 and
+                3 >= len(model_name.split('_')) >= 2 and
                 all([x.isdigit() and int(x) > 0 for x in model_name.split('_')[2:]]) and
                 int(model_name.split('_')[2]) >= 1)
 
