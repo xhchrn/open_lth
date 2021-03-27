@@ -33,7 +33,7 @@ class Model(base.Model):
             out = F.relu(self.bn2(self.conv2(out)))
             return F.relu(out)
 
-    def __init__(self, plan, initializer, num_512_blocks=5, outputs=None):
+    def __init__(self, initializer, num_512_blocks=5, outputs=None):
         super(Model, self).__init__()
         outputs = outputs or 10
 
@@ -104,7 +104,7 @@ class Model(base.Model):
         name = model_name.split('_')
         N = 5 if len(name) == 2 else int(name[2])
 
-        return Model(plan, initializer, outputs, num_512_blocks=N)
+        return Model(initializer, outputs, num_512_blocks=N)
 
     @property
     def loss_criterion(self):
