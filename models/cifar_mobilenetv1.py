@@ -22,7 +22,6 @@ class Model(base.Model):
         def __init__(self, f_in: int, f_out: int, stride=1):
             super(Model.Block, self).__init__()
 
-            stride = 2 if downsample else 1
             self.conv1 = nn.Conv2d(f_in, f_in, kernel_size=3, stride=stride, padding=1, groups=f_in, bias=False)
             self.bn1 = nn.BatchNorm2d(f_in)
             self.conv2 = nn.Conv2d(f_out, f_out, kernel_size=1, stride=1, padding=0, bias=False)
