@@ -104,7 +104,7 @@ class Model(base.Model):
         name = model_name.split('_')
         N = 5 if len(name) == 2 else int(name[2])
 
-        return Model(initializer, outputs, num_512_blocks=N)
+        return Model(initializer, N, outputs)
 
     @property
     def loss_criterion(self):
