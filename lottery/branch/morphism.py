@@ -17,6 +17,8 @@ def change_depth(model_name, src_sd, dst_sd, mappings, seed=None, permute_copy=F
         return change_depth_cifar_vggnfc(src_sd, dst_sd, mappings)
     elif 'vgg' in model_name and 'cifar' in model_name:
         return change_depth_cifar_vgg(src_sd, dst_sd, mappings)
+    elif 'mobilenetv1' in model_name and 'cifar' in model_name:
+        return change_depth_cifar_mobilenetv1(src_sd, dst_sd, mappings)
     elif 'lenet' in model_name and 'mnist' in model_name:
         return change_depth_mnist_lenet(src_sd, dst_sd, mappings)
     else:
@@ -147,6 +149,38 @@ def change_depth_cifar_vgg(src_sd, dst_sd, mappings):
             dst_k = '.'.join(new_split_k)
             dst_sd[dst_k] = v.clone()
             overwritten_keys.append(dst_k)
+
+    all_overwritten = True
+    for k in dst_sd.keys():
+        all_overwritten = all_overwritten and k in overwritten_keys
+    assert overwritten_keys
+
+    return dst_sd
+
+
+def change_depth_cifar_mobilenetv1(src_sd, dst_sd, mappings):
+    dst_sd = copy.deepcopy(dst_sd)
+
+    overwritten_keys = []
+
+    for k,v in src_sd.items():
+        if 'layers_part2' not in k:  # not the intermediate 512 layers
+            dst_sd[k] = v.clone()
+            overwritten_keys.append(k)
+            print('{} not part 2 layers, skipped'.format(k))
+            continue
+
+        # VGG FC Layers in classifier
+        split_k = k.split('.')
+        src_fc_id = int(split_k[1])
+        dst_fc_id_list = mappings.get(src_fc_id, [])
+        for dst_fc_id in dst_fc_id_list:
+            new_split_k = copy.deepcopy(split_k)
+            new_split_k[1] = str(dst_fc_id)
+            dst_k = '.'.join(new_split_k)
+            dst_sd[dst_k] = v.clone()
+            overwritten_keys.append(dst_k)
+            print('{} -> {}'.format(k, dst_k))
 
     all_overwritten = True
     for k in dst_sd.keys():
