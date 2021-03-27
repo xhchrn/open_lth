@@ -87,7 +87,7 @@ class Model(base.Model):
         return (model_name.startswith('cifar_mobilenetv1') and
                 3 >= len(model_name.split('_')) >= 2 and
                 all([x.isdigit() and int(x) > 0 for x in model_name.split('_')[2:]]) and
-                int(model_name.split('_')[2]) >= 1)
+                (len(model_name.split('_')) == 2 or int(model_name.split('_')[2]) >= 1))
 
     @staticmethod
     def get_model_from_name(model_name, initializer,  outputs=10):
