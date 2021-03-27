@@ -24,7 +24,7 @@ class Model(base.Model):
 
             self.conv1 = nn.Conv2d(f_in, f_in, kernel_size=3, stride=stride, padding=1, groups=f_in, bias=False)
             self.bn1 = nn.BatchNorm2d(f_in)
-            self.conv2 = nn.Conv2d(f_out, f_out, kernel_size=1, stride=1, padding=0, bias=False)
+            self.conv2 = nn.Conv2d(f_in, f_out, kernel_size=1, stride=1, padding=0, bias=False)
             self.bn2 = nn.BatchNorm2d(f_out)
 
         def forward(self, x):
