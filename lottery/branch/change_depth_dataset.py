@@ -29,7 +29,7 @@ class Branch(base.Branch):
         self,
         target_model_name: str = None,
         block_mapping: str = None,
-        target_dataset: str = None,
+        target_dataset_name: str = None,
         start_at_step_zero: bool = False
     ):
         # Process the mapping
@@ -66,8 +66,8 @@ class Branch(base.Branch):
         target_mask.save(self.branch_root)
         # Change to the target dataset
         target_dataset_hparams = copy.deepcopy(self.lottery_desc.dataset_hparams)
-        if target_dataset is not None:
-            target_dataset_hparams.dataset_name = target_dataset
+        if target_dataset_name is not None:
+            target_dataset_hparams.dataset_name = target_dataset_name
         train.standard_train(target_model, self.branch_root, target_dataset_hparams,
                              self.lottery_desc.training_hparams, start_step=start_step, verbose=self.verbose)
 
