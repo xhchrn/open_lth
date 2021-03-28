@@ -46,7 +46,7 @@ class Branch(base.Branch):
         target_model_name: str = None,
         block_mapping: str = None,
         start_at_step_zero: bool = False,
-        data_order_seed: int = 118
+        data_seed: int = 118
     ):
         # Process the mapping
         # A valid string format of a mapping is like:
@@ -86,7 +86,7 @@ class Branch(base.Branch):
         target_model_b = copy.deepcopy(target_model_a)
 
         # Save and run a standard train on model a
-        seed_a = data_order_seed + 9999
+        seed_a = data_seed + 9999
         training_hparams_a = copy.deepcopy(self.lottery_desc.pretrain_training_hparams)
         training_hparams_a.data_order_seed = seed_a
         training_hparams_a.training_steps = '10ep'
@@ -96,7 +96,7 @@ class Branch(base.Branch):
                              training_hparams_a, start_step=start_step, verbose=self.verbose)
 
         # Save and run a standard train on model b
-        seed_b = data_order_seed + 10001
+        seed_b = data_seed + 10001
         training_hparams_b = copy.deepcopy(self.lottery_desc.pretrain_training_hparams)
         training_hparams_b.data_order_seed = seed_b
         training_hparams_b.training_steps = '10ep'
