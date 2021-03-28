@@ -3,14 +3,18 @@ python3 open_lth.py lottery --default_hparams=cifar_mobilenetv1 --model_name cif
 python3 open_lth.py lottery --default_hparams=cifar_mobilenetv1 --model_name cifar_mobilenetv1_10 --level=10 --rewinding_steps=1000it --num_workers 8 --replicate=$replicate
 
 
-python3 open_lth.py lottery_branch randomly_reinitialize --default_hparams=cifar_vgg_16 --model_name cifar_vgg_13 --level=0-16 --rewinding_steps=200it --num_workers 4 --replicate=$replicate
-python3 open_lth.py lottery_branch randomly_reinitialize --default_hparams=cifar_vgg_16 --model_name cifar_vgg_16 --level=0-16 --rewinding_steps=200it --num_workers 4 --replicate=$replicate
-python3 open_lth.py lottery_branch randomly_reinitialize --default_hparams=cifar_vgg_16 --model_name cifar_vgg_19 --level=0-16 --rewinding_steps=200it --num_workers 4 --replicate=$replicate
+# From cifar_mobilenetv1_5 -> cifar_mobilenetv1_10
+export source_model="cifar_mobilenetv1_5"
+export target_model="cifar_mobilenetv1_10"
+export mapping="0:0,1;1:2,3;2:4,5;3:6,7;4:8,9"
+python3 open_lth.py lottery_branch change_depth --num_workers 8 --default_hparams=cifar_mobilenetv1 \
+    --model_name        $source_model --rewinding_steps 1000it --replicate=$replicate \
+    --target_model_name $target_model --block_mapping "${mapping}" --levels=10
 
-
-python3 open_lth.py lottery_branch randomly_prune --seed 7 --default_hparams=cifar_vgg_16 --model_name cifar_vgg_13 --level=0-16 --rewinding_steps=200it --num_workers 4 --replicate=$replicate
-python3 open_lth.py lottery_branch randomly_prune --seed 7 --default_hparams=cifar_vgg_16 --model_name cifar_vgg_16 --level=0-16 --rewinding_steps=200it --num_workers 4 --replicate=$replicate
-python3 open_lth.py lottery_branch randomly_prune --seed 7 --default_hparams=cifar_vgg_16 --model_name cifar_vgg_19 --level=0-16 --rewinding_steps=200it --num_workers 4 --replicate=$replicate
-
-python3 open_lth.py lottery --default_hparams=cifar_vggnfc_16 --model_name cifar_vggnfc_13_64_3 --level=12 --rewinding_steps=200it --num_workers 8 --replicate=$replicate
-
+# From cifar_mobilenetv1_5 -> cifar_mobilenetv1_3
+export source_model="cifar_mobilenetv1_5"
+export target_model="cifar_mobilenetv1_3"
+export mapping="0:0,1;1:2,3;2:4,5;3:6,7;4:8,9"
+python3 open_lth.py lottery_branch change_depth --num_workers 8 --default_hparams=cifar_mobilenetv1 \
+    --model_name        $source_model --rewinding_steps 1000it --replicate=$replicate \
+    --target_model_name $target_model --block_mapping "${mapping}" --levels=10
