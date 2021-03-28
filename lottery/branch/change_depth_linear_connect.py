@@ -90,7 +90,7 @@ class Branch(base.Branch):
 
         # Save and run a standard train on model a
         seed_a = data_seed + 9999
-        training_hparams_a = copy.deepcopy(self.lottery_desc.pretrain_training_hparams)
+        training_hparams_a = copy.deepcopy(self.lottery_desc.training_hparams)
         training_hparams_a.data_order_seed = seed_a
         output_dir_a = os.path.join(self.branch_root, f'seed_{seed_a}')
         target_mask.save(output_dir_a)
@@ -99,7 +99,7 @@ class Branch(base.Branch):
 
         # Save and run a standard train on model b
         seed_b = data_seed + 10001
-        training_hparams_b = copy.deepcopy(self.lottery_desc.pretrain_training_hparams)
+        training_hparams_b = copy.deepcopy(self.lottery_desc.training_hparams)
         training_hparams_b.data_order_seed = seed_b
         output_dir_b = os.path.join(self.branch_root, f'seed_{seed_b}')
         target_mask.save(output_dir_b)
@@ -107,7 +107,7 @@ class Branch(base.Branch):
                              training_hparams_b, start_step=start_step, verbose=self.verbose)
 
         # Linear connectivity between model_a and model_b
-        training_hparams_c = copy.deepcopy(self.lottery_desc.pretrain_training_hparams)
+        training_hparams_c = copy.deepcopy(self.lottery_desc.training_hparams)
         training_hparams_c.training_steps = '1ep'
         for alpha in np.linspace(0, 1.0, 21):
             model_c = linear_interpolate(target_model_a, target_model_b, alpha)
