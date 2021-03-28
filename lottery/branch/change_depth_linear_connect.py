@@ -92,7 +92,6 @@ class Branch(base.Branch):
         seed_a = data_seed + 9999
         training_hparams_a = copy.deepcopy(self.lottery_desc.pretrain_training_hparams)
         training_hparams_a.data_order_seed = seed_a
-        training_hparams_a.training_steps = '3ep'
         output_dir_a = os.path.join(self.branch_root, f'seed_{seed_a}')
         target_mask.save(output_dir_a)
         train.standard_train(target_model_a, output_dir_a, self.lottery_desc.dataset_hparams,
@@ -102,7 +101,6 @@ class Branch(base.Branch):
         seed_b = data_seed + 10001
         training_hparams_b = copy.deepcopy(self.lottery_desc.pretrain_training_hparams)
         training_hparams_b.data_order_seed = seed_b
-        training_hparams_b.training_steps = '3ep'
         output_dir_b = os.path.join(self.branch_root, f'seed_{seed_b}')
         target_mask.save(output_dir_b)
         train.standard_train(target_model_b, output_dir_b, self.lottery_desc.dataset_hparams,
