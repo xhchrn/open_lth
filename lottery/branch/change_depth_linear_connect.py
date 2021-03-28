@@ -6,6 +6,7 @@
 import os
 import copy
 import numpy as np
+import torch
 from lottery.branch import base
 import models.registry
 from pruning.mask import Mask
@@ -17,7 +18,7 @@ from lottery.branch.morphism import change_depth
 def linear_interpolate(pruned_model_a, pruned_model_b, alpha):
     model_c = copy.deepcopy(pruned_model_a)
     sd_c = model_c.state_dict()
-    for (ka, va), (kb, vb) in zip(pruned_model_a.items(), pruned_model_b.items()):
+    for (ka, va), (kb, vb) in zip(pruned_model_a.state_dict().items(), pruned_model_b.state_dict().items()):
         assert ka == kb
         if 'mask' in ka:
             assert torch.all(va == vb)
@@ -91,7 +92,7 @@ class Branch(base.Branch):
         seed_a = data_seed + 9999
         training_hparams_a = copy.deepcopy(self.lottery_desc.pretrain_training_hparams)
         training_hparams_a.data_order_seed = seed_a
-        training_hparams_a.training_steps = '10ep'
+        training_hparams_a.training_steps = '3ep'
         output_dir_a = os.path.join(self.branch_root, f'seed_{seed_a}')
         target_mask.save(output_dir_a)
         train.standard_train(target_model_a, output_dir_a, self.lottery_desc.dataset_hparams,
@@ -101,7 +102,7 @@ class Branch(base.Branch):
         seed_b = data_seed + 10001
         training_hparams_b = copy.deepcopy(self.lottery_desc.pretrain_training_hparams)
         training_hparams_b.data_order_seed = seed_b
-        training_hparams_b.training_steps = '10ep'
+        training_hparams_b.training_steps = '3ep'
         output_dir_b = os.path.join(self.branch_root, f'seed_{seed_b}')
         target_mask.save(output_dir_b)
         train.standard_train(target_model_b, output_dir_b, self.lottery_desc.dataset_hparams,
