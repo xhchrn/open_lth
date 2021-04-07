@@ -6,11 +6,12 @@
 import bisect
 import numpy as np
 import torch
+import torch.nn as nn
 
 from foundations.hparams import TrainingHparams
 from foundations.step import Step
 from models.base import Model
-
+from training.bop import Bop
 
 def get_optimizer(training_hparams: TrainingHparams, model: Model) -> torch.optim.Optimizer:
     if training_hparams.optimizer_name == 'sgd':
@@ -27,6 +28,36 @@ def get_optimizer(training_hparams: TrainingHparams, model: Model) -> torch.opti
             lr=training_hparams.lr,
             weight_decay=training_hparams.weight_decay or 0
         )
+    elif training_hparams.optimizer_name == "bop":
+        def get_bop_params(model: Model):
+            bop_params = []
+            for m in model.modules():
+                if isinstance(m, nn.Conv2d):
+                    bop_params += list(m.parameters())
+            return bop_params
+
+        def get_non_bop_params(model: Model):
+            non_bop_params = []
+            for m in model.modules():
+                if isinstance(m, (nn.Linear, nn.BatchNorm2d,)):
+                    non_bop_params += list(m.parameters())
+            return non_bop_params
+
+        bop_optimizer = Bop(
+            get_bop_params(model),
+            None,
+            ar=training_hparams.ar,
+            threshold=training_hparams.tau,
+            ar_decay_ratio=training_hparams.ar_decay_ratio,
+            ar_decay_freq=training_hparams.ar_decay_freq
+        )
+        non_bop_optimizer = torch.optim.SGD(
+            get_non_bop_params(model),
+            lr=training_hparams.lr,
+            momentum=training_hparams.momentum,
+            weight_decay=training_hparams.weight_decay
+        )
+        return (bop_optimizer, non_bop_optimizer)
 
     raise ValueError('No such optimizer: {}'.format(training_hparams.optimizer_name))
 

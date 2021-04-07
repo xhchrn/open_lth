@@ -162,6 +162,10 @@ class TrainingHparams(Hparams):
     warmup_steps: str = None
     weight_decay: float = None
     apex_fp16: bool = False
+    ar: float = 0.0
+    tau: float = 0.0
+    ar_decay_ratio: float = 0.0
+    ar_decay_freq: int = None
 
     _name: str = 'Training Hyperparameters'
     _description: str = 'Hyperparameters that determine how the model is trained.'
@@ -177,7 +181,10 @@ class TrainingHparams(Hparams):
     _warmup_steps: str = "Steps of linear lr warmup at the start of training as epochs ('20ep') or iterations ('800it')"
     _weight_decay: str = 'The L2 penalty to apply to the weights.'
     _apex_fp16: bool = 'Whether to train the model in float16 using the NVIDIA Apex library.'
-
+    _ar: str = 'Adaptivity ratio for bop optimizer'
+    _tau: str = 'Threshold for gradient accumulation in bop optimizer'
+    _ar_decay_ratio: str = 'Factor to decay the adaptivity ratio for bop optimizer'
+    _ar_decay_freq: str = 'Number of epochs between ar decays for bop optimizer'
 
 @dataclass
 class PruningHparams(Hparams):

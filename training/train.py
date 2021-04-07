@@ -64,13 +64,22 @@ def train(
     # Get the optimizer and learning rate schedule.
     model.to(get_platform().torch_device)
     optimizer = optimizers.get_optimizer(training_hparams, model)
-    step_optimizer = optimizer
-    lr_schedule = optimizers.get_lr_schedule(training_hparams, optimizer, train_loader.iterations_per_epoch)
+    if training_hparams.optimizer_name != 'bop':
+        step_optimizer = optimizer
+        fc_optimizer = None
+    else:
+        step_optimizer = optimizer[0]
+        fc_optimizer = optimizer[1]
+
+    lr_schedule = optimizers.get_lr_schedule(training_hparams,
+        optimizer if training_hparams.optimizer_name != 'bop' else fc_optimizer,
+        train_loader.iterations_per_epoch
+    )
 
     # Adapt for FP16.
     if training_hparams.apex_fp16:
         if NO_APEX: raise ImportError('Must install nvidia apex to use this model.')
-        model, step_optimizer = apex.amp.initialize(model, optimizer, loss_scale='dynamic', verbosity=0)
+        model, step_optimizer = apex.amp.initialize(model, step_optimizer, loss_scale='dynamic', verbosity=0)
 
     # Handle parallelism if applicable.
     if get_platform().is_distributed:
@@ -82,7 +91,7 @@ def train(
     data_order_seed = training_hparams.data_order_seed
 
     # Restore the model from a saved checkpoint if the checkpoint exists.
-    cp_step, cp_logger = restore_checkpoint(output_location, model, optimizer, train_loader.iterations_per_epoch, suffix)
+    cp_step, cp_logger = restore_checkpoint(output_location, model, step_optimizer, train_loader.iterations_per_epoch, suffix)
     start_step = cp_step or start_step or Step.zero(train_loader.iterations_per_epoch)
     logger = cp_logger or MetricLogger()
     with warnings.catch_warnings():  # Filter unnecessary warning.
@@ -106,7 +115,7 @@ def train(
 
             # Run the callbacks.
             step = Step.from_epoch(ep, it, train_loader.iterations_per_epoch)
-            for callback in callbacks: callback(output_location, step, model, optimizer, logger)
+            for callback in callbacks: callback(output_location, step, model, step_optimizer, logger)
 
             # Exit at the end step.
             if ep == end_step.ep and it == end_step.it: return
@@ -116,20 +125,27 @@ def train(
             labels = labels.to(device=get_platform().torch_device)
 
             step_optimizer.zero_grad()
+            if fc_optimizer:
+                fc_optimizer.zero_grad()
             model.train()
             loss = model.loss_criterion(model(examples), labels)
             if training_hparams.apex_fp16:
-                with apex.amp.scale_loss(loss, optimizer) as scaled_loss:
+                with apex.amp.scale_loss(loss, step_optimizer) as scaled_loss:
                     scaled_loss.backward()
             else:
                 loss.backward()
 
             # Step forward. Ignore extraneous warnings that the lr_schedule generates.
             step_optimizer.step()
+            if fc_optimizer:
+                fc_optimizer.step()
+
             with warnings.catch_warnings():  # Filter unnecessary warning.
                 warnings.filterwarnings("ignore", category=UserWarning)
                 lr_schedule.step()
 
+            if training_hparams.optimizer_name == 'bop' and (ep + 1 - start_step.ep) % training_hparams.ar_decay_freq == 0:
+                step_optimizer.decay_ar(training_hparams.ar_decay_ratio)
     get_platform().barrier()
 
 

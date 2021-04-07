@@ -113,7 +113,7 @@ class Model(base.Model):
         """
 
         model_hparams = hparams.ModelHparams(
-            model_name='cifarhe_resnet_50',
+            model_name='cifarhe_resnet_18',
             model_init='kaiming_normal',
             batchnorm_init='uniform',
         )
@@ -129,8 +129,8 @@ class Model(base.Model):
             milestone_steps='80ep,120ep',
             lr=0.1,
             gamma=0.1,
-            weight_decay=1e-4,
-            training_steps='160ep',
+            weight_decay=5e-4,
+            training_steps='200ep',
         )
 
         pruning_hparams = sparse_global.PruningHparams(
