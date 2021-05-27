@@ -51,7 +51,7 @@ class Dataset(base.ImageDataset):
             # torchvision.transforms.RandomCrop(32, 4)
             transforms.RandomResizedCrop(224),
             transforms.RandomHorizontalFlip(),
-            transforms.ToTensor(),
+            # transforms.ToTensor(),
             normalize
         ]
         train_set = CIFAR10(train=True, root=os.path.join(get_platform().dataset_root, 'cifar10'), download=True)
@@ -62,7 +62,7 @@ class Dataset(base.ImageDataset):
         augment = [
             transforms.Resize(256),
             transforms.CenterCrop(224),
-            transforms.ToTensor(),
+            # transforms.ToTensor(),
             normalize
         ]
         test_set = CIFAR10(train=False, root=os.path.join(get_platform().dataset_root, 'cifar10'), download=True)
