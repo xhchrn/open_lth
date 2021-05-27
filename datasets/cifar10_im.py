@@ -8,6 +8,7 @@ import os
 from PIL import Image
 import sys
 import torchvision
+from torchvision import transforms
 
 from datasets import base
 from platforms.platform import get_platform
