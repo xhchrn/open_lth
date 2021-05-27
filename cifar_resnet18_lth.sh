@@ -10,3 +10,26 @@
 #SBATCH --mail-type=end
 
 python3 open_lth.py lottery --default_hparams=cifarhe_resnet_18 --model_name cifarhe_resnet_18 --level=16 --rewinding_steps=1000it --num_workers 4 --replicate=42
+
+python3 open_lth.py lottery --default_hparams=cifarhe_resnet_18 --model_name cifarhe_resnet_18 --level=16 --rewinding_steps=1000it --num_workers 4 --replicate=42
+
+python open_lth.py lottery --num_workers 4 \
+    --default_hparams=imagenet_resnet_50 \
+    --model_name imagenet_resnet_18 \
+    --milestone_steps '80ep,120ep' --training_steps '160ep' --warmup_steps '1ep' \
+    --dataset_name cifar10_im --batch_size 128 \
+    --levels=6 --rewinding_steps 5ep --replicate=$replicate
+
+python open_lth.py lottery --num_workers 4 \
+    --default_hparams=imagenet_resnet_50 \
+    --model_name imagenet_resnet_26 \
+    --milestone_steps '80ep,120ep' --training_steps '160ep' --warmup_steps '1ep' \
+    --dataset_name cifar10_im --batch_size 128 \
+    --levels=6 --rewinding_steps 5ep --replicate=$replicate
+
+python open_lth.py lottery --num_workers 4 \
+    --default_hparams=imagenet_resnet_50 \
+    --model_name imagenet_resnet_34 \
+    --milestone_steps '80ep,120ep' --training_steps '160ep' --warmup_steps '1ep' \
+    --dataset_name cifar10_im --batch_size 128 \
+    --levels=6 --rewinding_steps 5ep --replicate=$replicate

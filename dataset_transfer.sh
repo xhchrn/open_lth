@@ -83,3 +83,14 @@ export mapping="0:0;1:1;2:2"
 python3 open_lth.py lottery_branch change_depth_dataset --num_workers 4 --default_hparams=cifar_resnet_20 \
     --dataset_name        $source_dataset --model_name        $source_model --rewinding_steps 1000it --replicate=$replicate \
     --target_dataset_name $target_dataset --target_model_name $target_model --block_mapping "${mapping}" --levels=10
+
+
+# From imagenet_resnet18 -> cifar10_im_resnet18
+export source_model="imagenet_resnet_18"
+export target_model="imagenet_resnet_18"
+export source_dataset="imagenet"
+export target_dataset="cifar10_im"
+export mapping="0:0;1:1|0:0;1:1|0:0;1:1|0:0;1:1"
+python3 open_lth.py lottery_branch --num_workers 4 --default_hparams=imagenet_resnet_50 --model_name imagenet_resnet_18 \
+    --dataset_name        $source_dataset --model_name        $source_model --rewinding_steps 5ep --replicate=$replicate \
+    --target_dataset_name $target_dataset --target_model_name $target_model --block_mapping "${mapping}" --levels=6
