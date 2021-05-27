@@ -52,7 +52,7 @@ class Dataset(base.ImageDataset):
             transforms.RandomResizedCrop(224),
             transforms.RandomHorizontalFlip(),
             # transforms.ToTensor(),
-            normalize
+            # normalize
         ]
         train_set = CIFAR10(train=True, root=os.path.join(get_platform().dataset_root, 'cifar10'), download=True)
         return Dataset(train_set.data, np.array(train_set.targets), augment if use_augmentation else [])
@@ -63,13 +63,13 @@ class Dataset(base.ImageDataset):
             transforms.Resize(256),
             transforms.CenterCrop(224),
             # transforms.ToTensor(),
-            normalize
+            # normalize
         ]
         test_set = CIFAR10(train=False, root=os.path.join(get_platform().dataset_root, 'cifar10'), download=True)
         return Dataset(test_set.data, np.array(test_set.targets), augment)
 
     def __init__(self,  examples, labels, image_transforms=None):
-        super(Dataset, self).__init__(examples, labels, image_transforms or [], None)
+        super(Dataset, self).__init__(examples, labels, image_transforms or [], [normalize])
             # [torchvision.transforms.Normalize(
             #     [0.485, 0.456, 0.406],
             #     [0.229, 0.224, 0.225]
